@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.xiaopo.flying.stickerview.sticker.DialogDrawable;
 import com.xiaopo.flying.stickerview.sticker.StickerView;
 import com.xiaopo.flying.stickerview.util.FileUtil;
 
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     if (item.getItemId() == R.id.item_save) {
-                        File file = FileUtil.getNewFile(MainActivity.this, "BitmapSticker");
+                        File file = FileUtil.getNewFile(MainActivity.this, "Sticker");
                         if (file != null) {
                             mStickerView.save(file);
                             Toast.makeText(MainActivity.this, "saved in " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
             mStickerView.addSticker(bitmap);
             mStickerView.addSticker(bitmap1);
             mStickerView.addSticker(bitmap2);
+            mStickerView.addSticker(new DialogDrawable());
         }
     }
 

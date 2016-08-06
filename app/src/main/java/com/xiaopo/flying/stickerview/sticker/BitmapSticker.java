@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.PointF;
-import android.graphics.RectF;
 
 /**
  * Created by snowbean on 16-8-2.
@@ -42,18 +40,13 @@ public class BitmapSticker extends Sticker {
         return mBitmap.getHeight();
     }
 
-
+    @Override
     public void release() {
+        super.release();
         if (mBitmap != null) {
             mBitmap.recycle();
             mBitmap = null;
         }
-
-        if (mMatrix != null) {
-            mMatrix.reset();
-            mMatrix = null;
-        }
-
     }
 
 }

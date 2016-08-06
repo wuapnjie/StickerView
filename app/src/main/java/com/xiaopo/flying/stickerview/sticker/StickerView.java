@@ -9,6 +9,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -271,6 +272,7 @@ public class StickerView extends ImageView {
             case MotionEvent.ACTION_UP:
                 if (mCurrentMode == ActionMode.DELETE) {
                     mStickers.remove(mHandlingSticker);
+                    mHandlingSticker.release();
                     mHandlingSticker = null;
                     invalidate();
                 }
@@ -430,22 +432,45 @@ public class StickerView extends ImageView {
     public void addSticker(Bitmap stickerBitmap) {
         Matrix matrix = new Matrix();
 
-        BitmapSticker bitmapSticker = new BitmapSticker(stickerBitmap, matrix);
+        Sticker bitmapSticker = new BitmapSticker(stickerBitmap, matrix);
 
-        float offsetX = (getWidth() - bitmapSticker.getBitmap().getWidth()) / 2;
-        float offsetY = (getHeight() - bitmapSticker.getBitmap().getHeight()) / 2;
+        float offsetX = (getWidth() - bitmapSticker.getWidth()) / 2;
+        float offsetY = (getHeight() - bitmapSticker.getHeight()) / 2;
         bitmapSticker.getMatrix().postTranslate(offsetX, offsetY);
 
         float scaleFactor;
         if (getWidth() < getHeight()) {
-            scaleFactor = (float) getWidth() / stickerBitmap.getWidth();
+            scaleFactor = (float) getWidth() / bitmapSticker.getWidth();
         } else {
-            scaleFactor = (float) getHeight() / stickerBitmap.getHeight();
+            scaleFactor = (float) getHeight() / bitmapSticker.getHeight();
         }
         bitmapSticker.getMatrix().postScale(scaleFactor / 2, scaleFactor / 2, getWidth() / 2, getHeight() / 2);
 
         mHandlingSticker = bitmapSticker;
         mStickers.add(bitmapSticker);
+
+        invalidate();
+    }
+
+    public void addSticker(Drawable stickerDrawable) {
+        Matrix matrix = new Matrix();
+
+        Sticker drawableSticker = new DrawableSticker(stickerDrawable, matrix);
+
+        float offsetX = (getWidth() - drawableSticker.getWidth()) / 2;
+        float offsetY = (getHeight() - drawableSticker.getHeight()) / 2;
+        drawableSticker.getMatrix().postTranslate(offsetX, offsetY);
+
+        float scaleFactor;
+        if (getWidth() < getHeight()) {
+            scaleFactor = (float) getWidth() / stickerDrawable.getIntrinsicWidth();
+        } else {
+            scaleFactor = (float) getHeight() / stickerDrawable.getIntrinsicWidth();
+        }
+        drawableSticker.getMatrix().postScale(scaleFactor / 2, scaleFactor / 2, getWidth() / 2, getHeight() / 2);
+
+        mHandlingSticker = drawableSticker;
+        mStickers.add(drawableSticker);
 
         invalidate();
     }

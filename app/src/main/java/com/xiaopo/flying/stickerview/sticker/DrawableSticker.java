@@ -1,6 +1,8 @@
 package com.xiaopo.flying.stickerview.sticker;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 
@@ -11,6 +13,12 @@ public class DrawableSticker extends Sticker {
     protected static final String TAG = "DrawableSticker";
 
     private Drawable mDrawable;
+    private Bitmap mBitmap;
+
+    public DrawableSticker(Drawable drawable, Matrix matrix) {
+        mDrawable = drawable;
+        mMatrix = matrix;
+    }
 
     public Drawable getDrawable() {
         return mDrawable;
@@ -22,7 +30,14 @@ public class DrawableSticker extends Sticker {
 
     @Override
     public void draw(Canvas canvas, Paint paint) {
-        mDrawable.draw(canvas);
+        if (mBitmap != null) {
+            mBitmap.recycle();
+            mBitmap = null;
+        }
+        mBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(mBitmap);
+        mDrawable.draw(c);
+        canvas.drawBitmap(mBitmap, mMatrix, paint);
     }
 
     @Override
@@ -35,4 +50,16 @@ public class DrawableSticker extends Sticker {
         return mDrawable.getIntrinsicHeight();
     }
 
+    @Override
+    public void release() {
+        super.release();
+        if (mBitmap != null) {
+            mBitmap.recycle();
+            mBitmap = null;
+        }
+
+        if (mDrawable != null) {
+            mDrawable = null;
+        }
+    }
 }

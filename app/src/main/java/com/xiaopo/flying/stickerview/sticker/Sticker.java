@@ -73,4 +73,11 @@ public abstract class Sticker {
         return new PointF(dst[0], dst[1]);
     }
 
+    public void release(){
+        if (mMatrix!=null){
+            mMatrix.reset();
+            mMatrix = null;
+        }
+    }
+
 }
