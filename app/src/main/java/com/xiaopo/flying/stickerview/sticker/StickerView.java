@@ -416,16 +416,16 @@ public class StickerView extends ImageView {
         return sticker.getMappedBoundPoints();
     }
 
-    public void setSticker(BitmapSticker bitmapSticker) {
+    public void setSticker(Sticker sticker) {
         mStickers.clear();
-        mStickers.add(bitmapSticker);
-        mHandlingSticker = bitmapSticker;
+        mStickers.add(sticker);
+        mHandlingSticker = sticker;
         invalidate();
     }
 
-    public void addSticker(BitmapSticker bitmapSticker) {
-        mStickers.add(bitmapSticker);
-        mHandlingSticker = bitmapSticker;
+    public void addSticker(Sticker sticker) {
+        mStickers.add(sticker);
+        mHandlingSticker = sticker;
         invalidate();
     }
 

@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         mStickerView.setBackgroundColor(Color.WHITE);
 
         if (toolbar != null) {
-            toolbar.setTitle("BitmapSticker");
+            toolbar.setTitle(R.string.app_name);
             toolbar.inflateMenu(R.menu.menu_save);
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
