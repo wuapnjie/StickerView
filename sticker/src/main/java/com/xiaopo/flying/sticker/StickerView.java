@@ -1,4 +1,4 @@
-package com.xiaopo.flying.stickerview.sticker;
+package com.xiaopo.flying.sticker;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -15,9 +15,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageView;
-
-import com.xiaopo.flying.stickerview.R;
-import com.xiaopo.flying.stickerview.util.BitmapUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -153,9 +150,9 @@ public class StickerView extends ImageView {
             mDeleteIcon.getMatrix().reset();
 
             mDeleteIcon.getMatrix().postRotate(
-                    rotation, mDeleteIcon.getBitmap().getWidth() / 2, mDeleteIcon.getBitmap().getHeight() / 2);
+                    rotation, mDeleteIcon.getWidth() / 2, mDeleteIcon.getHeight() / 2);
             mDeleteIcon.getMatrix().postTranslate(
-                    x1 - mDeleteIcon.getBitmap().getWidth() / 2, y1 - mDeleteIcon.getBitmap().getHeight() / 2);
+                    x1 - mDeleteIcon.getWidth() / 2, y1 - mDeleteIcon.getHeight() / 2);
 
             canvas.drawBitmap(mDeleteIcon.getBitmap(), mDeleteIcon.getMatrix(), mBitmapPaint);
 
@@ -166,10 +163,10 @@ public class StickerView extends ImageView {
 
             mZoomIcon.getMatrix().reset();
             mZoomIcon.getMatrix().postRotate(
-                    45f + rotation, mZoomIcon.getBitmap().getWidth() / 2, mZoomIcon.getBitmap().getHeight() / 2);
+                    45f + rotation, mZoomIcon.getWidth() / 2, mZoomIcon.getHeight() / 2);
 
             mZoomIcon.getMatrix().postTranslate(
-                    x4 - mZoomIcon.getBitmap().getWidth() / 2, y4 - mZoomIcon.getBitmap().getHeight() / 2);
+                    x4 - mZoomIcon.getWidth() / 2, y4 - mZoomIcon.getHeight() / 2);
 
             canvas.drawBitmap(mZoomIcon.getBitmap(), mZoomIcon.getMatrix(), mBitmapPaint);
         }
@@ -208,7 +205,6 @@ public class StickerView extends ImageView {
 
 
             case MotionEvent.ACTION_POINTER_DOWN:
-                Log.d(TAG, "onTouchEvent: point down ->" + event.getPointerCount());
 
                 mOldDistance = calculateDistance(event);
                 mOldRotation = calculateRotation(event);
@@ -308,7 +304,6 @@ public class StickerView extends ImageView {
     private Sticker findHandlingSticker() {
         for (int i = mStickers.size() - 1; i >= 0; i--) {
             if (isInStickerArea(mStickers.get(i), mDownX, mDownY)) {
-                Log.d(TAG, "findHandlingSticker: " + i);
                 return mStickers.get(i);
             }
         }
@@ -363,7 +358,6 @@ public class StickerView extends ImageView {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        Log.e(TAG, "onSizeChanged: ");
         for (int i = 0; i < mStickers.size(); i++) {
             Sticker sticker = mStickers.get(i);
             if (sticker != null) {

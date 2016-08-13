@@ -1,4 +1,4 @@
-package com.xiaopo.flying.stickerview.util;
+package com.xiaopo.flying.sticker;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,10 +12,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 /**
  * Created by snowbean on 16-8-5.
  */
-public class BitmapUtil {
+class BitmapUtil {
     private static final String TAG = "BitmapUtil";
 
     public static String saveImageToGallery(Bitmap bmp) {

@@ -1,4 +1,4 @@
-package com.xiaopo.flying.stickerview.sticker;
+package com.xiaopo.flying.sticker;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

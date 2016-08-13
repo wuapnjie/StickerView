@@ -13,8 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.xiaopo.flying.stickerview.sticker.DialogDrawable;
-import com.xiaopo.flying.stickerview.sticker.StickerView;
+import com.xiaopo.flying.sticker.StickerView;
 import com.xiaopo.flying.stickerview.util.FileUtil;
 
 import java.io.File;

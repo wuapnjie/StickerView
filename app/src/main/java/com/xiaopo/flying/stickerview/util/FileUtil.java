@@ -25,22 +25,6 @@ import java.util.Locale;
 public class FileUtil {
     private static final String TAG = "FileUtil";
 
-    public static void notifySystemGallery(Context context, File file) {
-        if (file == null || !file.exists()) {
-            Log.e(TAG, "notifySystemGallery: the file do not exist.");
-            return;
-        }
-
-        try {
-            MediaStore.Images.Media.insertImage(context.getContentResolver(),
-                    file.getAbsolutePath(), file.getName(), null);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        // 最后通知图库更新
-        context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
-    }
-
     public static String getFolderName(String name) {
         File mediaStorageDir = new File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
@@ -82,39 +66,4 @@ public class FileUtil {
         return new File(path);
     }
 
-    public static File copyFileTo(File src, File dst) {
-        FileChannel in = null;
-        FileChannel out = null;
-        FileInputStream inStream = null;
-        FileOutputStream outStream = null;
-        try {
-            inStream = new FileInputStream(src);
-            outStream = new FileOutputStream(dst);
-            in = inStream.getChannel();
-            out = outStream.getChannel();
-            in.transferTo(0, in.size(), out);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-                if (out != null) {
-                    out.close();
-                }
-                if (inStream != null) {
-                    inStream.close();
-                }
-                if (outStream != null) {
-                    outStream.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return dst;
-    }
 }
