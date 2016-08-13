@@ -22,7 +22,6 @@ if the sticker is drawable, it's intrinsic width and height can not be zero.
 stickerView.addSticker(bitmap)
 stickerView.addSticker(drawable)
 ```
-
 ###licence
 > Copyright (C) 2016 wuapnjie
   
