@@ -2,7 +2,6 @@ package com.xiaopo.flying.sticker;
 
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
 
@@ -19,10 +18,10 @@ public abstract class Sticker {
     }
 
     public void setMatrix(Matrix matrix) {
-        mMatrix = matrix;
+        mMatrix.set(matrix);
     }
 
-    public abstract void draw(Canvas canvas, Paint paint);
+    public abstract void draw(Canvas canvas);
 
     public abstract int getWidth();
 
@@ -74,10 +73,6 @@ public abstract class Sticker {
     }
 
     public void release(){
-        if (mMatrix!=null){
-            mMatrix.reset();
-            mMatrix = null;
-        }
     }
 
 }
