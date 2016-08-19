@@ -2,14 +2,15 @@ package com.xiaopo.flying.sticker;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -41,7 +42,6 @@ public class StickerView extends ImageView {
     public static final float DEFAULT_ICON_RADIUS = 30f;
     public static final float DEFAULT_ICON_EXTRA_RADIUS = 10f;
 
-    private Paint mBitmapPaint;
     private Paint mBorderPaint;
 
     private RectF mStickerRect;
@@ -81,10 +81,6 @@ public class StickerView extends ImageView {
     public StickerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        mBitmapPaint = new Paint();
-        mBitmapPaint.setAntiAlias(true);
-        mBitmapPaint.setFilterBitmap(true);
-
         mBorderPaint = new Paint();
         mBorderPaint.setAntiAlias(true);
         mBorderPaint.setColor(Color.BLACK);
@@ -96,10 +92,8 @@ public class StickerView extends ImageView {
 
         mStickerRect = new RectF();
 
-        Bitmap deleteIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_close_white_18dp);
-        mDeleteIcon = new BitmapStickerIcon(deleteIcon, new Matrix());
-        Bitmap zoomIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_scale_white_18dp);
-        mZoomIcon = new BitmapStickerIcon(zoomIcon, new Matrix());
+        mDeleteIcon = new BitmapStickerIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_close_white_18dp));
+        mZoomIcon = new BitmapStickerIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_scale_white_18dp));
     }
 
     @Override
@@ -120,7 +114,7 @@ public class StickerView extends ImageView {
         for (int i = 0; i < mStickers.size(); i++) {
             Sticker sticker = mStickers.get(i);
             if (sticker != null) {
-                sticker.draw(canvas, mBitmapPaint);
+                sticker.draw(canvas);
             }
         }
 
@@ -154,7 +148,7 @@ public class StickerView extends ImageView {
             mDeleteIcon.getMatrix().postTranslate(
                     x1 - mDeleteIcon.getWidth() / 2, y1 - mDeleteIcon.getHeight() / 2);
 
-            canvas.drawBitmap(mDeleteIcon.getBitmap(), mDeleteIcon.getMatrix(), mBitmapPaint);
+            mDeleteIcon.draw(canvas);
 
             //draw zoom icon
             canvas.drawCircle(x4, y4, mIconRadius, mBorderPaint);
@@ -168,7 +162,8 @@ public class StickerView extends ImageView {
             mZoomIcon.getMatrix().postTranslate(
                     x4 - mZoomIcon.getWidth() / 2, y4 - mZoomIcon.getHeight() / 2);
 
-            canvas.drawBitmap(mZoomIcon.getBitmap(), mZoomIcon.getMatrix(), mBitmapPaint);
+            //canvas.drawBitmap(mZoomIcon.getBitmap(), mZoomIcon.getMatrix(), mBitmapPaint);
+            mZoomIcon.draw(canvas);
         }
 
     }
@@ -199,7 +194,6 @@ public class StickerView extends ImageView {
                 if (mHandlingSticker != null) {
                     mDownMatrix.set(mHandlingSticker.getMatrix());
                 }
-
                 invalidate();
                 break;
 
@@ -219,50 +213,8 @@ public class StickerView extends ImageView {
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                switch (mCurrentMode) {
-                    case NONE:
-                        break;
-                    case DRAG:
-
-                        if (mHandlingSticker != null) {
-                            mMoveMatrix.set(mDownMatrix);
-                            mMoveMatrix.postTranslate(event.getX() - mDownX, event.getY() - mDownY);
-//                            mHandlingSticker.getMatrix().reset();
-                            mHandlingSticker.getMatrix().set(mMoveMatrix);
-                        }
-                        break;
-                    case ZOOM_WITH_TWO_FINGER:
-                        if (mHandlingSticker != null) {
-                            float newDistance = calculateDistance(event);
-                            float newRotation = calculateRotation(event);
-
-                            mMoveMatrix.set(mDownMatrix);
-                            mMoveMatrix.postScale(
-                                    newDistance / mOldDistance, newDistance / mOldDistance, mMidPoint.x, mMidPoint.y);
-                            mMoveMatrix.postRotate(newRotation - mOldRotation, mMidPoint.x, mMidPoint.y);
-//                            mHandlingSticker.getMatrix().reset();
-                            mHandlingSticker.getMatrix().set(mMoveMatrix);
-                        }
-
-                        break;
-
-                    case ZOOM_WITH_ICON:
-                        if (mHandlingSticker != null) {
-                            float newDistance = calculateDistance(mMidPoint.x, mMidPoint.y, event.getX(), event.getY());
-                            float newRotation = calculateRotation(mMidPoint.x, mMidPoint.y, event.getX(), event.getY());
-
-                            mMoveMatrix.set(mDownMatrix);
-                            mMoveMatrix.postScale(
-                                    newDistance / mOldDistance, newDistance / mOldDistance, mMidPoint.x, mMidPoint.y);
-                            mMoveMatrix.postRotate(newRotation - mOldRotation, mMidPoint.x, mMidPoint.y);
-//                            mHandlingSticker.getMatrix().reset();
-                            mHandlingSticker.getMatrix().set(mMoveMatrix);
-                        }
-
-                        break;
-                }
+                handleCurrentMode(event);
                 invalidate();
-
                 break;
 
             case MotionEvent.ACTION_UP:
@@ -279,9 +231,54 @@ public class StickerView extends ImageView {
                 mCurrentMode = ActionMode.NONE;
                 break;
 
-        }
+        }//end of switch(action)
 
         return true;
+    }
+
+    private void handleCurrentMode(MotionEvent event) {
+        switch (mCurrentMode) {
+            case NONE:
+                break;
+            case DRAG:
+
+                if (mHandlingSticker != null) {
+                    mMoveMatrix.set(mDownMatrix);
+                    mMoveMatrix.postTranslate(event.getX() - mDownX, event.getY() - mDownY);
+//                            mHandlingSticker.getMatrix().reset();
+                    mHandlingSticker.getMatrix().set(mMoveMatrix);
+                }
+                break;
+            case ZOOM_WITH_TWO_FINGER:
+                if (mHandlingSticker != null) {
+                    float newDistance = calculateDistance(event);
+                    float newRotation = calculateRotation(event);
+
+                    mMoveMatrix.set(mDownMatrix);
+                    mMoveMatrix.postScale(
+                            newDistance / mOldDistance, newDistance / mOldDistance, mMidPoint.x, mMidPoint.y);
+                    mMoveMatrix.postRotate(newRotation - mOldRotation, mMidPoint.x, mMidPoint.y);
+//                            mHandlingSticker.getMatrix().reset();
+                    mHandlingSticker.getMatrix().set(mMoveMatrix);
+                }
+
+                break;
+
+            case ZOOM_WITH_ICON:
+                if (mHandlingSticker != null) {
+                    float newDistance = calculateDistance(mMidPoint.x, mMidPoint.y, event.getX(), event.getY());
+                    float newRotation = calculateRotation(mMidPoint.x, mMidPoint.y, event.getX(), event.getY());
+
+                    mMoveMatrix.set(mDownMatrix);
+                    mMoveMatrix.postScale(
+                            newDistance / mOldDistance, newDistance / mOldDistance, mMidPoint.x, mMidPoint.y);
+                    mMoveMatrix.postRotate(newRotation - mOldRotation, mMidPoint.x, mMidPoint.y);
+//                            mHandlingSticker.getMatrix().reset();
+                    mHandlingSticker.getMatrix().set(mMoveMatrix);
+                }
+
+                break;
+        }// end of switch(mCurrentMode)
     }
 
     //判断是否按在缩放按钮区域
@@ -410,46 +407,13 @@ public class StickerView extends ImageView {
         return sticker.getMappedBoundPoints();
     }
 
-    public void setSticker(Sticker sticker) {
-        mStickers.clear();
-        mStickers.add(sticker);
-        mHandlingSticker = sticker;
-        invalidate();
-    }
-
-    public void addSticker(Sticker sticker) {
-        mStickers.add(sticker);
-        mHandlingSticker = sticker;
-        invalidate();
-    }
 
     public void addSticker(Bitmap stickerBitmap) {
-        Matrix matrix = new Matrix();
-
-        Sticker bitmapSticker = new BitmapSticker(stickerBitmap, matrix);
-
-        float offsetX = (getWidth() - bitmapSticker.getWidth()) / 2;
-        float offsetY = (getHeight() - bitmapSticker.getHeight()) / 2;
-        bitmapSticker.getMatrix().postTranslate(offsetX, offsetY);
-
-        float scaleFactor;
-        if (getWidth() < getHeight()) {
-            scaleFactor = (float) getWidth() / bitmapSticker.getWidth();
-        } else {
-            scaleFactor = (float) getHeight() / bitmapSticker.getHeight();
-        }
-        bitmapSticker.getMatrix().postScale(scaleFactor / 2, scaleFactor / 2, getWidth() / 2, getHeight() / 2);
-
-        mHandlingSticker = bitmapSticker;
-        mStickers.add(bitmapSticker);
-
-        invalidate();
+        addSticker(new BitmapDrawable(getResources(), stickerBitmap));
     }
 
     public void addSticker(Drawable stickerDrawable) {
-        Matrix matrix = new Matrix();
-
-        Sticker drawableSticker = new DrawableSticker(stickerDrawable, matrix);
+        Sticker drawableSticker = new DrawableSticker(stickerDrawable);
 
         float offsetX = (getWidth() - drawableSticker.getWidth()) / 2;
         float offsetY = (getHeight() - drawableSticker.getHeight()) / 2;

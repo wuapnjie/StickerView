@@ -1,9 +1,8 @@
 package com.xiaopo.flying.sticker;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
 /**
@@ -13,11 +12,12 @@ public class DrawableSticker extends Sticker {
     protected static final String TAG = "DrawableSticker";
 
     private Drawable mDrawable;
-    private Bitmap mBitmap;
+    private Rect realBounds;
 
-    public DrawableSticker(Drawable drawable, Matrix matrix) {
+    public DrawableSticker(Drawable drawable) {
         mDrawable = drawable;
-        mMatrix = matrix;
+        mMatrix = new Matrix();
+        realBounds = new Rect(0, 0, getWidth(), getHeight());
     }
 
     public Drawable getDrawable() {
@@ -29,15 +29,12 @@ public class DrawableSticker extends Sticker {
     }
 
     @Override
-    public void draw(Canvas canvas, Paint paint) {
-        if (mBitmap != null) {
-            mBitmap.recycle();
-            mBitmap = null;
-        }
-        mBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(mBitmap);
-        mDrawable.draw(c);
-        canvas.drawBitmap(mBitmap, mMatrix, paint);
+    public void draw(Canvas canvas) {
+        canvas.save();
+        canvas.concat(mMatrix);
+        mDrawable.setBounds(realBounds);
+        mDrawable.draw(canvas);
+        canvas.restore();
     }
 
     @Override
@@ -53,11 +50,6 @@ public class DrawableSticker extends Sticker {
     @Override
     public void release() {
         super.release();
-        if (mBitmap != null) {
-            mBitmap.recycle();
-            mBitmap = null;
-        }
-
         if (mDrawable != null) {
             mDrawable = null;
         }

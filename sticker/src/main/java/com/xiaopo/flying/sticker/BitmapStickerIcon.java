@@ -1,17 +1,16 @@
 package com.xiaopo.flying.sticker;
 
-import android.graphics.Bitmap;
-import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 
 /**
  * Created by snowbean on 16-8-5.
  */
-public class BitmapStickerIcon extends BitmapSticker {
+public class BitmapStickerIcon extends DrawableSticker {
     private float x;
     private float y;
 
-    public BitmapStickerIcon(Bitmap bitmap, Matrix matrix) {
-        super(bitmap, matrix);
+    public BitmapStickerIcon(Drawable drawable) {
+        super(drawable);
     }
 
     public float getX() {
