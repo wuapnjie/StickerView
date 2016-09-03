@@ -218,7 +218,7 @@ public class StickerView extends ImageView {
                 break;
 
             case MotionEvent.ACTION_UP:
-                if (mCurrentMode == ActionMode.DELETE) {
+                if (mCurrentMode == ActionMode.DELETE && mHandlingSticker != null) {
                     mStickers.remove(mHandlingSticker);
                     mHandlingSticker.release();
                     mHandlingSticker = null;
