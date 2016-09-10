@@ -5,11 +5,6 @@ A view which can add sticker and zoom,drag,delete it
 ![](https://github.com/wuapnjie/StickerView/blob/master/screenshots/stickerview.gif)
 
 ###usage
-add dependencies
-```gradle
-compile 'com.flying.xiaopo:sticker:1.1.0'
-```
-
 StickerView extends ImageView
 in layout
 ```xml
