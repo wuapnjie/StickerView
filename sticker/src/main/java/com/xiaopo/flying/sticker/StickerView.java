@@ -182,7 +182,7 @@ public class StickerView extends ImageView {
 
                 if (checkDeleteIconTouched(mIconExtraRadius)) {
                     mCurrentMode = ActionMode.DELETE;
-                } else if (checkZoomIconTouched(mIconExtraRadius)) {
+                } else if (checkZoomIconTouched(mIconExtraRadius) && mHandlingSticker != null) {
                     mCurrentMode = ActionMode.ZOOM_WITH_ICON;
                     mMidPoint = calculateMidPoint();
                     mOldDistance = calculateDistance(mMidPoint.x, mMidPoint.y, mDownX, mDownY);
@@ -313,17 +313,20 @@ public class StickerView extends ImageView {
     }
 
     private PointF calculateMidPoint(MotionEvent event) {
+        if (event == null || event.getPointerCount() < 2) return new PointF();
         float x = (event.getX(0) + event.getX(1)) / 2;
         float y = (event.getY(0) + event.getY(1)) / 2;
         return new PointF(x, y);
     }
 
     private PointF calculateMidPoint() {
+        if (mHandlingSticker == null) return new PointF();
         return mHandlingSticker.getMappedCenterPoint();
     }
 
     //计算两点形成的直线与x轴的旋转角度
     private float calculateRotation(MotionEvent event) {
+        if (event == null || event.getPointerCount() < 2) return 0f;
         double x = event.getX(0) - event.getX(1);
         double y = event.getY(0) - event.getY(1);
         double radians = Math.atan2(y, x);
@@ -339,6 +342,7 @@ public class StickerView extends ImageView {
 
     //计算两点间的距离
     private float calculateDistance(MotionEvent event) {
+        if (event == null || event.getPointerCount() < 2) return 0f;
         float x = event.getX(0) - event.getX(1);
         float y = event.getY(0) - event.getY(1);
 
