@@ -243,8 +243,8 @@ public class StickerView extends ImageView {
                 }
 
                 if (mCurrentMode == ActionMode.FLIP_HORIZONTAL && mHandlingSticker != null) {
-                    mHandlingSticker.getMatrix().postScale(-1, 1,
-                            mHandlingSticker.getMappedCenterPoint().x, mHandlingSticker.getMappedCenterPoint().y);
+                    mHandlingSticker.getMatrix().preScale(-1, 1,
+                            mHandlingSticker.getCenterPoint().x, mHandlingSticker.getCenterPoint().y);
 
                     mHandlingSticker.setFlipped(!mHandlingSticker.isFlipped());
                     invalidate();
