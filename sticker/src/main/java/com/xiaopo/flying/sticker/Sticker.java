@@ -12,6 +12,15 @@ public abstract class Sticker {
     protected static final String TAG = "Sticker";
 
     protected Matrix mMatrix;
+    protected boolean mIsFlipped;
+
+    public boolean isFlipped() {
+        return mIsFlipped;
+    }
+
+    public void setFlipped(boolean flipped) {
+        mIsFlipped = flipped;
+    }
 
     public Matrix getMatrix() {
         return mMatrix;
@@ -28,12 +37,21 @@ public abstract class Sticker {
     public abstract int getHeight();
 
     public float[] getBoundPoints() {
-        return new float[]{
-                0f, 0f,
-                getWidth(), 0f,
-                0f, getHeight(),
-                getWidth(), getHeight()
-        };
+        if (!mIsFlipped) {
+            return new float[]{
+                    0f, 0f,
+                    getWidth(), 0f,
+                    0f, getHeight(),
+                    getWidth(), getHeight()
+            };
+        } else {
+            return new float[]{
+                    getWidth(), 0f,
+                    0f, 0f,
+                    getWidth(), getHeight(),
+                    0f, getHeight()
+            };
+        }
     }
 
     public float[] getMappedBoundPoints() {
@@ -72,7 +90,7 @@ public abstract class Sticker {
         return new PointF(dst[0], dst[1]);
     }
 
-    public void release(){
+    public void release() {
     }
 
 }

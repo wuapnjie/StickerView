@@ -12,12 +12,12 @@ public class DrawableSticker extends Sticker {
     protected static final String TAG = "DrawableSticker";
 
     private Drawable mDrawable;
-    private Rect realBounds;
+    private Rect mRealBounds;
 
     public DrawableSticker(Drawable drawable) {
         mDrawable = drawable;
         mMatrix = new Matrix();
-        realBounds = new Rect(0, 0, getWidth(), getHeight());
+        mRealBounds = new Rect(0, 0, getWidth(), getHeight());
     }
 
     public Drawable getDrawable() {
@@ -32,7 +32,7 @@ public class DrawableSticker extends Sticker {
     public void draw(Canvas canvas) {
         canvas.save();
         canvas.concat(mMatrix);
-        mDrawable.setBounds(realBounds);
+        mDrawable.setBounds(mRealBounds);
         mDrawable.draw(canvas);
         canvas.restore();
     }

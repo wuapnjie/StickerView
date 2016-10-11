@@ -35,7 +35,8 @@ public class StickerView extends ImageView {
         DRAG,   //drag the sticker with your finger
         ZOOM_WITH_TWO_FINGER,   //zoom in or zoom out the sticker and rotate the sticker with two finger
         ZOOM_WITH_ICON,    //zoom in or zoom out the sticker and rotate the sticker with icon
-        DELETE  //delete the handling sticker
+        DELETE,  //delete the handling sticker
+        FLIP_HORIZONTAL //horizontal flip the sticker
     }
 
     private static final String TAG = "StickerView";
@@ -52,6 +53,7 @@ public class StickerView extends ImageView {
 
     private BitmapStickerIcon mDeleteIcon;
     private BitmapStickerIcon mZoomIcon;
+    private BitmapStickerIcon mFlipIcon;
 
     private float mIconRadius = DEFAULT_ICON_RADIUS;
     private float mIconExtraRadius = DEFAULT_ICON_EXTRA_RADIUS;
@@ -94,6 +96,7 @@ public class StickerView extends ImageView {
 
         mDeleteIcon = new BitmapStickerIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_close_white_18dp));
         mZoomIcon = new BitmapStickerIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_scale_white_18dp));
+        mFlipIcon = new BitmapStickerIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_flip_white_18dp));
     }
 
     @Override
@@ -162,8 +165,20 @@ public class StickerView extends ImageView {
             mZoomIcon.getMatrix().postTranslate(
                     x4 - mZoomIcon.getWidth() / 2, y4 - mZoomIcon.getHeight() / 2);
 
-            //canvas.drawBitmap(mZoomIcon.getBitmap(), mZoomIcon.getMatrix(), mBitmapPaint);
             mZoomIcon.draw(canvas);
+
+            //draw flip icon
+            canvas.drawCircle(x2, y2, mIconRadius, mBorderPaint);
+            mFlipIcon.setX(x2);
+            mFlipIcon.setY(y2);
+
+            mFlipIcon.getMatrix().reset();
+            mFlipIcon.getMatrix().postRotate(
+                    rotation, mDeleteIcon.getWidth() / 2, mDeleteIcon.getHeight() / 2);
+            mFlipIcon.getMatrix().postTranslate(
+                    x2 - mFlipIcon.getWidth() / 2, y2 - mFlipIcon.getHeight() / 2);
+
+            mFlipIcon.draw(canvas);
         }
 
     }
@@ -182,6 +197,8 @@ public class StickerView extends ImageView {
 
                 if (checkDeleteIconTouched(mIconExtraRadius)) {
                     mCurrentMode = ActionMode.DELETE;
+                } else if (checkHorizontalFlipIconTouched(mIconExtraRadius)) {
+                    mCurrentMode = ActionMode.FLIP_HORIZONTAL;
                 } else if (checkZoomIconTouched(mIconExtraRadius) && mHandlingSticker != null) {
                     mCurrentMode = ActionMode.ZOOM_WITH_ICON;
                     mMidPoint = calculateMidPoint();
@@ -224,6 +241,15 @@ public class StickerView extends ImageView {
                     mHandlingSticker = null;
                     invalidate();
                 }
+
+                if (mCurrentMode == ActionMode.FLIP_HORIZONTAL && mHandlingSticker != null) {
+                    mHandlingSticker.getMatrix().postScale(-1, 1,
+                            mHandlingSticker.getMappedCenterPoint().x, mHandlingSticker.getMappedCenterPoint().y);
+
+                    mHandlingSticker.setFlipped(!mHandlingSticker.isFlipped());
+                    invalidate();
+                }
+
                 mCurrentMode = ActionMode.NONE;
                 break;
 
@@ -235,6 +261,7 @@ public class StickerView extends ImageView {
 
         return true;
     }
+
 
     private void handleCurrentMode(MotionEvent event) {
         switch (mCurrentMode) {
@@ -293,6 +320,14 @@ public class StickerView extends ImageView {
     private boolean checkDeleteIconTouched(float extraRadius) {
         float x = mDeleteIcon.getX() - mDownX;
         float y = mDeleteIcon.getY() - mDownY;
+        float distance_pow_2 = x * x + y * y;
+        return distance_pow_2 <= (mIconRadius + extraRadius) * (mIconRadius + extraRadius);
+    }
+
+    //判断是否按在翻转按钮区域
+    private boolean checkHorizontalFlipIconTouched(float extraRadius) {
+        float x = mFlipIcon.getX() - mDownX;
+        float y = mFlipIcon.getY() - mDownY;
         float distance_pow_2 = x * x + y * y;
         return distance_pow_2 <= (mIconRadius + extraRadius) * (mIconRadius + extraRadius);
     }
@@ -405,6 +440,7 @@ public class StickerView extends ImageView {
         invalidate();
     }
 
+    //更
     public float[] getStickerPoints(Sticker sticker) {
         if (sticker == null) return new float[8];
 
