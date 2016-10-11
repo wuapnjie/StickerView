@@ -25,5 +25,6 @@ stickerView.addSticker(drawable)
 
 ## update
 * 2016/10/11 Add horizontal flip function
+
 ## licence
 MIT LICENCE
