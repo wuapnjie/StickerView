@@ -72,6 +72,8 @@ public class StickerView extends ImageView {
     private List<Sticker> mStickers = new ArrayList<>();
     private Sticker mHandlingSticker;
 
+    private boolean mLooked;
+
     public StickerView(Context context) {
         this(context, null);
     }
@@ -121,7 +123,7 @@ public class StickerView extends ImageView {
             }
         }
 
-        if (mHandlingSticker != null) {
+        if (mHandlingSticker != null && !mLooked) {
 
             float[] bitmapPoints = getStickerPoints(mHandlingSticker);
 
@@ -186,6 +188,8 @@ public class StickerView extends ImageView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (mLooked) return super.onTouchEvent(event);
+
         int action = MotionEventCompat.getActionMasked(event);
 
         switch (action) {
@@ -526,5 +530,13 @@ public class StickerView extends ImageView {
 
     public void setIconExtraRadius(float iconExtraRadius) {
         mIconExtraRadius = iconExtraRadius;
+    }
+
+    public boolean isLooked() {
+        return mLooked;
+    }
+
+    public void setLooked(boolean looked) {
+        mLooked = looked;
     }
 }

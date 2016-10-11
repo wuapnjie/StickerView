@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         mStickerView.setBackgroundColor(Color.WHITE);
+        mStickerView.setLooked(false);
 
         if (toolbar != null) {
             toolbar.setTitle(R.string.app_name);
