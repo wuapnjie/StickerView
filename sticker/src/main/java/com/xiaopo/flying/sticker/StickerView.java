@@ -15,6 +15,7 @@ import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.ViewConfiguration;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -36,7 +37,8 @@ public class StickerView extends ImageView {
         ZOOM_WITH_TWO_FINGER,   //zoom in or zoom out the sticker and rotate the sticker with two finger
         ZOOM_WITH_ICON,    //zoom in or zoom out the sticker and rotate the sticker with icon
         DELETE,  //delete the handling sticker
-        FLIP_HORIZONTAL //horizontal flip the sticker
+        FLIP_HORIZONTAL, //horizontal flip the sticker
+        CLICK    //Click the Sticker
     }
 
     private static final String TAG = "StickerView";
@@ -74,6 +76,10 @@ public class StickerView extends ImageView {
 
     private boolean mLooked;
 
+    private int mTouchSlop;
+
+    private OnStickerClickListener mOnStickerClickListener;
+
     public StickerView(Context context) {
         this(context, null);
     }
@@ -84,6 +90,8 @@ public class StickerView extends ImageView {
 
     public StickerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
 
         mBorderPaint = new Paint();
         mBorderPaint.setAntiAlias(true);
@@ -254,6 +262,16 @@ public class StickerView extends ImageView {
                     invalidate();
                 }
 
+                if (mCurrentMode == ActionMode.DRAG
+                        && Math.abs(event.getX() - mDownX) < mTouchSlop
+                        && Math.abs(event.getY() - mDownY) < mTouchSlop
+                        && mHandlingSticker != null) {
+                    mCurrentMode = ActionMode.CLICK;
+                    if (mOnStickerClickListener != null) {
+                        mOnStickerClickListener.onStickerClick(mHandlingSticker);
+                    }
+                }
+
                 mCurrentMode = ActionMode.NONE;
                 break;
 
@@ -276,7 +294,6 @@ public class StickerView extends ImageView {
                 if (mHandlingSticker != null) {
                     mMoveMatrix.set(mDownMatrix);
                     mMoveMatrix.postTranslate(event.getX() - mDownX, event.getY() - mDownY);
-//                            mHandlingSticker.getMatrix().reset();
                     mHandlingSticker.getMatrix().set(mMoveMatrix);
                 }
                 break;
@@ -289,7 +306,6 @@ public class StickerView extends ImageView {
                     mMoveMatrix.postScale(
                             newDistance / mOldDistance, newDistance / mOldDistance, mMidPoint.x, mMidPoint.y);
                     mMoveMatrix.postRotate(newRotation - mOldRotation, mMidPoint.x, mMidPoint.y);
-//                            mHandlingSticker.getMatrix().reset();
                     mHandlingSticker.getMatrix().set(mMoveMatrix);
                 }
 
@@ -304,7 +320,6 @@ public class StickerView extends ImageView {
                     mMoveMatrix.postScale(
                             newDistance / mOldDistance, newDistance / mOldDistance, mMidPoint.x, mMidPoint.y);
                     mMoveMatrix.postRotate(newRotation - mOldRotation, mMidPoint.x, mMidPoint.y);
-//                            mHandlingSticker.getMatrix().reset();
                     mHandlingSticker.getMatrix().set(mMoveMatrix);
                 }
 
@@ -444,6 +459,35 @@ public class StickerView extends ImageView {
         invalidate();
     }
 
+    public void replace(Drawable stickerDrawable) {
+        if (mHandlingSticker != null) {
+            if (mHandlingSticker instanceof DrawableSticker) {
+                ((DrawableSticker) mHandlingSticker).setDrawable(stickerDrawable);
+            } else {
+                Log.d(TAG, "replace: the current sticker did not support drawable");
+            }
+
+            invalidate();
+        }
+    }
+
+    public void replace(Bitmap stickerBitmap) {
+        replace(new BitmapDrawable(getResources(), stickerBitmap));
+    }
+
+    public void replace(Sticker sticker, boolean needStayState) {
+        if (mHandlingSticker != null && sticker != null) {
+            if (needStayState) {
+                sticker.getMatrix().set(mHandlingSticker.getMatrix());
+                sticker.setFlipped(mHandlingSticker.isFlipped());
+            }
+            int index = mStickers.indexOf(mHandlingSticker);
+            mStickers.set(index, sticker);
+            mHandlingSticker = sticker;
+            invalidate();
+        }
+    }
+
     //更
     public float[] getStickerPoints(Sticker sticker) {
         if (sticker == null) return new float[8];
@@ -538,5 +582,14 @@ public class StickerView extends ImageView {
 
     public void setLooked(boolean looked) {
         mLooked = looked;
+        invalidate();
+    }
+
+    public void setOnStickerClickListener(OnStickerClickListener onStickerClickListener) {
+        mOnStickerClickListener = onStickerClickListener;
+    }
+
+    public interface OnStickerClickListener {
+        void onStickerClick(Sticker sticker);
     }
 }

@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -13,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.xiaopo.flying.sticker.Sticker;
 import com.xiaopo.flying.sticker.StickerView;
 import com.xiaopo.flying.stickerview.util.FileUtil;
 
@@ -29,9 +31,15 @@ public class MainActivity extends AppCompatActivity {
 
         mStickerView = (StickerView) findViewById(R.id.sticker_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
+        final Bitmap bitmapReplace = BitmapFactory.decodeResource(getResources(), R.drawable.haizewang_2);
         mStickerView.setBackgroundColor(Color.WHITE);
         mStickerView.setLooked(false);
+        mStickerView.setOnStickerClickListener(new StickerView.OnStickerClickListener() {
+            @Override
+            public void onStickerClick(Sticker sticker) {
+                mStickerView.replace(new BitmapDrawable(getResources(), bitmapReplace));
+            }
+        });
 
         if (toolbar != null) {
             toolbar.setTitle(R.string.app_name);
