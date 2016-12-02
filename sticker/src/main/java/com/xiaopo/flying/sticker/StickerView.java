@@ -8,15 +8,13 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
-import android.widget.ImageView;
+import android.widget.FrameLayout;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,7 +28,7 @@ import java.util.List;
  * Created by snowbean on 16-8-2.
  */
 
-public class StickerView extends ImageView {
+public class StickerView extends FrameLayout {
     private enum ActionMode {
         NONE,   //nothing
         DRAG,   //drag the sticker with your finger
@@ -74,7 +72,7 @@ public class StickerView extends ImageView {
     private List<Sticker> mStickers = new ArrayList<>();
     private Sticker mHandlingSticker;
 
-    private boolean mLooked;
+    private boolean mLocked;
 
     private int mTouchSlop;
 
@@ -121,9 +119,7 @@ public class StickerView extends ImageView {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
+    protected void dispatchDraw(Canvas canvas) {
         for (int i = 0; i < mStickers.size(); i++) {
             Sticker sticker = mStickers.get(i);
             if (sticker != null) {
@@ -131,7 +127,7 @@ public class StickerView extends ImageView {
             }
         }
 
-        if (mHandlingSticker != null && !mLooked) {
+        if (mHandlingSticker != null && !mLocked) {
 
             float[] bitmapPoints = getStickerPoints(mHandlingSticker);
 
@@ -190,13 +186,12 @@ public class StickerView extends ImageView {
 
             mFlipIcon.draw(canvas);
         }
-
+        super.dispatchDraw(canvas);
     }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (mLooked) return super.onTouchEvent(event);
+        if (mLocked) return super.onTouchEvent(event);
 
         int action = MotionEventCompat.getActionMasked(event);
 
@@ -459,20 +454,8 @@ public class StickerView extends ImageView {
         invalidate();
     }
 
-    public void replace(Drawable stickerDrawable) {
-        if (mHandlingSticker != null) {
-            if (mHandlingSticker instanceof DrawableSticker) {
-                ((DrawableSticker) mHandlingSticker).setDrawable(stickerDrawable);
-            } else {
-                Log.d(TAG, "replace: the current sticker did not support drawable");
-            }
-
-            invalidate();
-        }
-    }
-
-    public void replace(Bitmap stickerBitmap) {
-        replace(new BitmapDrawable(getResources(), stickerBitmap));
+    public void replace(Sticker sticker) {
+        replace(sticker, true);
     }
 
     public void replace(Sticker sticker, boolean needStayState) {
@@ -488,37 +471,27 @@ public class StickerView extends ImageView {
         }
     }
 
-    //更
+    public void addSticker(Sticker sticker) {
+        float offsetX = (getWidth() - sticker.getWidth()) / 2;
+        float offsetY = (getHeight() - sticker.getHeight()) / 2;
+        sticker.getMatrix().postTranslate(offsetX, offsetY);
+
+        float scaleFactor;
+        if (getWidth() < getHeight()) {
+            scaleFactor = (float) getWidth() / sticker.getDrawable().getIntrinsicWidth();
+        } else {
+            scaleFactor = (float) getHeight() / sticker.getDrawable().getIntrinsicHeight();
+        }
+        sticker.getMatrix().postScale(scaleFactor / 2, scaleFactor / 2, getWidth() / 2, getHeight() / 2);
+
+        mHandlingSticker = sticker;
+        mStickers.add(sticker);
+    }
+
     public float[] getStickerPoints(Sticker sticker) {
         if (sticker == null) return new float[8];
 
         return sticker.getMappedBoundPoints();
-    }
-
-
-    public void addSticker(Bitmap stickerBitmap) {
-        addSticker(new BitmapDrawable(getResources(), stickerBitmap));
-    }
-
-    public void addSticker(Drawable stickerDrawable) {
-        Sticker drawableSticker = new DrawableSticker(stickerDrawable);
-
-        float offsetX = (getWidth() - drawableSticker.getWidth()) / 2;
-        float offsetY = (getHeight() - drawableSticker.getHeight()) / 2;
-        drawableSticker.getMatrix().postTranslate(offsetX, offsetY);
-
-        float scaleFactor;
-        if (getWidth() < getHeight()) {
-            scaleFactor = (float) getWidth() / stickerDrawable.getIntrinsicWidth();
-        } else {
-            scaleFactor = (float) getHeight() / stickerDrawable.getIntrinsicWidth();
-        }
-        drawableSticker.getMatrix().postScale(scaleFactor / 2, scaleFactor / 2, getWidth() / 2, getHeight() / 2);
-
-        mHandlingSticker = drawableSticker;
-        mStickers.add(drawableSticker);
-
-        invalidate();
     }
 
     public void save(File file) {
@@ -576,12 +549,12 @@ public class StickerView extends ImageView {
         mIconExtraRadius = iconExtraRadius;
     }
 
-    public boolean isLooked() {
-        return mLooked;
+    public boolean isLocked() {
+        return mLocked;
     }
 
-    public void setLooked(boolean looked) {
-        mLooked = looked;
+    public void setLocked(boolean locked) {
+        mLocked = locked;
         invalidate();
     }
 
