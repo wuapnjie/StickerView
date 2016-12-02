@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 
@@ -38,6 +39,10 @@ public abstract class Sticker {
     public abstract int getWidth();
 
     public abstract int getHeight();
+
+    public abstract void setDrawable(Drawable drawable);
+
+    public abstract Drawable getDrawable();
 
     public float[] getBoundPoints() {
         if (!mIsFlipped) {

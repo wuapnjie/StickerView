@@ -20,10 +20,12 @@ public class DrawableSticker extends Sticker {
         mRealBounds = new Rect(0, 0, getWidth(), getHeight());
     }
 
+    @Override
     public Drawable getDrawable() {
         return mDrawable;
     }
 
+    @Override
     public void setDrawable(Drawable drawable) {
         mDrawable = drawable;
     }
