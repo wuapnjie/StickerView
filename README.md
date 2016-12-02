@@ -2,8 +2,8 @@
 A view which can add sticker and zoom,drag,flip,delete it
 
 ## Screenshots
-![](https://github.com/wuapnjie/StickerView/blob/master/screenshots/screenshot1.gif)
-![](https://github.com/wuapnjie/StickerView/blob/master/screenshots/screenshot2.gif)
+![](https://github.com/wuapnjie/StickerView/blob/master/screenshots/screenshot1.png)
+![](https://github.com/wuapnjie/StickerView/blob/master/screenshots/screenshot2.png)
 
 ## Update
 
