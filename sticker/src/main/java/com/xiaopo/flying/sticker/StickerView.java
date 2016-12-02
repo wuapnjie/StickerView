@@ -17,14 +17,11 @@ import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * sticker view
+ * Sticker view
  * Created by snowbean on 16-8-2.
  */
 
@@ -40,8 +37,6 @@ public class StickerView extends FrameLayout {
     }
 
     private static final String TAG = "StickerView";
-    public static final float DEFAULT_ICON_RADIUS = 30f;
-    public static final float DEFAULT_ICON_EXTRA_RADIUS = 10f;
 
     private Paint mBorderPaint;
 
@@ -55,15 +50,12 @@ public class StickerView extends FrameLayout {
     private BitmapStickerIcon mZoomIcon;
     private BitmapStickerIcon mFlipIcon;
 
-    private float mIconRadius = DEFAULT_ICON_RADIUS;
-    private float mIconExtraRadius = DEFAULT_ICON_EXTRA_RADIUS;
-
     //the first point down position
     private float mDownX;
     private float mDownY;
 
-    private float mOldDistance = 1f;
-    private float mOldRotation = 0;
+    private float mOldDistance = 0f;
+    private float mOldRotation = 0f;
 
     private PointF mMidPoint;
 
@@ -94,7 +86,7 @@ public class StickerView extends FrameLayout {
         mBorderPaint = new Paint();
         mBorderPaint.setAntiAlias(true);
         mBorderPaint.setColor(Color.BLACK);
-        mBorderPaint.setAlpha(160);
+        mBorderPaint.setAlpha(128);
 
         mSizeMatrix = new Matrix();
         mDownMatrix = new Matrix();
@@ -120,6 +112,11 @@ public class StickerView extends FrameLayout {
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
+        drawStickers(canvas);
+    }
+
+    private void drawStickers(Canvas canvas) {
         for (int i = 0; i < mStickers.size(); i++) {
             Sticker sticker = mStickers.get(i);
             if (sticker != null) {
@@ -147,46 +144,28 @@ public class StickerView extends FrameLayout {
 
             float rotation = calculateRotation(x3, y3, x4, y4);
             //draw delete icon
-            canvas.drawCircle(x1, y1, mIconRadius, mBorderPaint);
-            mDeleteIcon.setX(x1);
-            mDeleteIcon.setY(y1);
-            mDeleteIcon.getMatrix().reset();
-
-            mDeleteIcon.getMatrix().postRotate(
-                    rotation, mDeleteIcon.getWidth() / 2, mDeleteIcon.getHeight() / 2);
-            mDeleteIcon.getMatrix().postTranslate(
-                    x1 - mDeleteIcon.getWidth() / 2, y1 - mDeleteIcon.getHeight() / 2);
-
-            mDeleteIcon.draw(canvas);
+            configIconMatrix(mDeleteIcon, x1, y1, rotation);
+            mDeleteIcon.draw(canvas, mBorderPaint);
 
             //draw zoom icon
-            canvas.drawCircle(x4, y4, mIconRadius, mBorderPaint);
-            mZoomIcon.setX(x4);
-            mZoomIcon.setY(y4);
-
-            mZoomIcon.getMatrix().reset();
-            mZoomIcon.getMatrix().postRotate(
-                    45f + rotation, mZoomIcon.getWidth() / 2, mZoomIcon.getHeight() / 2);
-
-            mZoomIcon.getMatrix().postTranslate(
-                    x4 - mZoomIcon.getWidth() / 2, y4 - mZoomIcon.getHeight() / 2);
-
-            mZoomIcon.draw(canvas);
+            configIconMatrix(mZoomIcon, x4, y4, rotation);
+            mZoomIcon.draw(canvas, mBorderPaint);
 
             //draw flip icon
-            canvas.drawCircle(x2, y2, mIconRadius, mBorderPaint);
-            mFlipIcon.setX(x2);
-            mFlipIcon.setY(y2);
-
-            mFlipIcon.getMatrix().reset();
-            mFlipIcon.getMatrix().postRotate(
-                    rotation, mDeleteIcon.getWidth() / 2, mDeleteIcon.getHeight() / 2);
-            mFlipIcon.getMatrix().postTranslate(
-                    x2 - mFlipIcon.getWidth() / 2, y2 - mFlipIcon.getHeight() / 2);
-
-            mFlipIcon.draw(canvas);
+            configIconMatrix(mFlipIcon, x2, y2, rotation);
+            mFlipIcon.draw(canvas, mBorderPaint);
         }
-        super.dispatchDraw(canvas);
+    }
+
+    private void configIconMatrix(BitmapStickerIcon icon, float x, float y, float rotation) {
+        icon.setX(x);
+        icon.setY(y);
+        icon.getMatrix().reset();
+
+        icon.getMatrix().postRotate(
+                rotation, icon.getWidth() / 2, icon.getHeight() / 2);
+        icon.getMatrix().postTranslate(
+                x - icon.getWidth() / 2, y - icon.getHeight() / 2);
     }
 
     @Override
@@ -202,11 +181,11 @@ public class StickerView extends FrameLayout {
                 mDownX = event.getX();
                 mDownY = event.getY();
 
-                if (checkDeleteIconTouched(mIconExtraRadius)) {
+                if (checkIconTouched(mDeleteIcon)) {
                     mCurrentMode = ActionMode.DELETE;
-                } else if (checkHorizontalFlipIconTouched(mIconExtraRadius)) {
+                } else if (checkIconTouched(mFlipIcon)) {
                     mCurrentMode = ActionMode.FLIP_HORIZONTAL;
-                } else if (checkZoomIconTouched(mIconExtraRadius) && mHandlingSticker != null) {
+                } else if (checkIconTouched(mZoomIcon) && mHandlingSticker != null) {
                     mCurrentMode = ActionMode.ZOOM_WITH_ICON;
                     mMidPoint = calculateMidPoint();
                     mOldDistance = calculateDistance(mMidPoint.x, mMidPoint.y, mDownX, mDownY);
@@ -231,7 +210,7 @@ public class StickerView extends FrameLayout {
 
                 if (mHandlingSticker != null &&
                         isInStickerArea(mHandlingSticker, event.getX(1), event.getY(1)) &&
-                        !checkDeleteIconTouched(mIconExtraRadius))
+                        !checkIconTouched(mDeleteIcon))
 
                     mCurrentMode = ActionMode.ZOOM_WITH_TWO_FINGER;
                 break;
@@ -322,31 +301,16 @@ public class StickerView extends FrameLayout {
         }// end of switch(mCurrentMode)
     }
 
-    //判断是否按在缩放按钮区域
-    private boolean checkZoomIconTouched(float extraRadius) {
-        float x = mZoomIcon.getX() - mDownX;
-        float y = mZoomIcon.getY() - mDownY;
+    private boolean checkIconTouched(BitmapStickerIcon icon) {
+        float x = icon.getX() - mDownX;
+        float y = icon.getY() - mDownY;
         float distance_pow_2 = x * x + y * y;
-        return distance_pow_2 <= (mIconRadius + extraRadius) * (mIconRadius + extraRadius);
+        return distance_pow_2 <= Math.pow(icon.getIconRadius() + icon.getIconRadius(), 2);
     }
 
-    //判断是否按在删除按钮区域
-    private boolean checkDeleteIconTouched(float extraRadius) {
-        float x = mDeleteIcon.getX() - mDownX;
-        float y = mDeleteIcon.getY() - mDownY;
-        float distance_pow_2 = x * x + y * y;
-        return distance_pow_2 <= (mIconRadius + extraRadius) * (mIconRadius + extraRadius);
-    }
-
-    //判断是否按在翻转按钮区域
-    private boolean checkHorizontalFlipIconTouched(float extraRadius) {
-        float x = mFlipIcon.getX() - mDownX;
-        float y = mFlipIcon.getY() - mDownY;
-        float distance_pow_2 = x * x + y * y;
-        return distance_pow_2 <= (mIconRadius + extraRadius) * (mIconRadius + extraRadius);
-    }
-
-    //找到点击的区域属于哪个贴纸
+    /**
+     * find the touched Sticker
+     **/
     private Sticker findHandlingSticker() {
         for (int i = mStickers.size() - 1; i >= 0; i--) {
             if (isInStickerArea(mStickers.get(i), mDownX, mDownY)) {
@@ -357,8 +321,7 @@ public class StickerView extends FrameLayout {
     }
 
     private boolean isInStickerArea(Sticker sticker, float downX, float downY) {
-        RectF dst = sticker.getMappedBound();
-        return dst.contains(downX, downY);
+        return sticker.contains(downX, downY);
     }
 
     private PointF calculateMidPoint(MotionEvent event) {
@@ -373,7 +336,9 @@ public class StickerView extends FrameLayout {
         return mHandlingSticker.getMappedCenterPoint();
     }
 
-    //计算两点形成的直线与x轴的旋转角度
+    /**
+     * calculate rotation in line with two fingers and x-axis
+     **/
     private float calculateRotation(MotionEvent event) {
         if (event == null || event.getPointerCount() < 2) return 0f;
         double x = event.getX(0) - event.getX(1);
@@ -389,7 +354,9 @@ public class StickerView extends FrameLayout {
         return (float) Math.toDegrees(radians);
     }
 
-    //计算两点间的距离
+    /**
+     * calculate Distance in two fingers
+     **/
     private float calculateDistance(MotionEvent event) {
         if (event == null || event.getPointerCount() < 2) return 0f;
         float x = event.getX(0) - event.getX(1);
@@ -417,9 +384,12 @@ public class StickerView extends FrameLayout {
 
     }
 
-    //sticker的图片会过大或过小，需要转化
-    //step 1：使sticker图片的中心与View的中心重合
-    //step 2：计算缩放值，进行缩放
+    /**
+     * Sticker's drawable will be too bigger or smaller
+     * This method is to transform it to fit
+     * step 1：let the center of the sticker image is coincident with the center of the View.
+     * step 2：Calculate the zoom and zoom
+     **/
     private void transformSticker(Sticker sticker) {
         if (sticker == null) {
             Log.e(TAG, "transformSticker: the bitmapSticker is null or the bitmapSticker bitmap is null");
@@ -490,37 +460,12 @@ public class StickerView extends FrameLayout {
 
     public float[] getStickerPoints(Sticker sticker) {
         if (sticker == null) return new float[8];
-
         return sticker.getMappedBoundPoints();
     }
 
     public void save(File file) {
-        Bitmap bitmap = null;
-        FileOutputStream outputStream = null;
-
-        try {
-            bitmap = createBitmap();
-            outputStream = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
-
-            BitmapUtil.notifySystemGallery(getContext(), file);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            if (bitmap != null) {
-                bitmap.recycle();
-            }
-
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
+        StickerUtils.saveImageToGallery(file, createBitmap());
+        StickerUtils.notifySystemGallery(getContext(), file);
     }
 
     public Bitmap createBitmap() {
@@ -528,25 +473,7 @@ public class StickerView extends FrameLayout {
         Bitmap bitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         this.draw(canvas);
-
         return bitmap;
-    }
-
-    public float getIconRadius() {
-        return mIconRadius;
-    }
-
-    public void setIconRadius(float iconRadius) {
-        mIconRadius = iconRadius;
-        invalidate();
-    }
-
-    public float getIconExtraRadius() {
-        return mIconExtraRadius;
-    }
-
-    public void setIconExtraRadius(float iconExtraRadius) {
-        mIconExtraRadius = iconExtraRadius;
     }
 
     public boolean isLocked() {
@@ -560,6 +487,33 @@ public class StickerView extends FrameLayout {
 
     public void setOnStickerClickListener(OnStickerClickListener onStickerClickListener) {
         mOnStickerClickListener = onStickerClickListener;
+    }
+
+    public BitmapStickerIcon getFlipIcon() {
+        return mFlipIcon;
+    }
+
+    public void setFlipIcon(BitmapStickerIcon flipIcon) {
+        mFlipIcon = flipIcon;
+        postInvalidate();
+    }
+
+    public BitmapStickerIcon getZoomIcon() {
+        return mZoomIcon;
+    }
+
+    public void setZoomIcon(BitmapStickerIcon zoomIcon) {
+        mZoomIcon = zoomIcon;
+        postInvalidate();
+    }
+
+    public BitmapStickerIcon getDeleteIcon() {
+        return mDeleteIcon;
+    }
+
+    public void setDeleteIcon(BitmapStickerIcon deleteIcon) {
+        mDeleteIcon = deleteIcon;
+        postInvalidate();
     }
 
     public interface OnStickerClickListener {

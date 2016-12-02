@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
  * Created by snowbean on 16-8-6.
  */
 public class DrawableSticker extends Sticker {
-    protected static final String TAG = "DrawableSticker";
 
     private Drawable mDrawable;
     private Rect mRealBounds;

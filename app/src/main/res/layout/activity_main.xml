@@ -19,7 +19,18 @@
         android:id="@+id/sticker_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:src="@drawable/haizewang_215" />
+        android:layout_gravity="center">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/haizewang_90" />
+
+        <ImageView
+            android:src="@drawable/border"
+            android:scaleType="fitXY"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.xiaopo.flying.sticker.StickerView>
 
 </LinearLayout>

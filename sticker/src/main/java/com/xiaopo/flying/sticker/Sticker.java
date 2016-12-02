@@ -138,6 +138,16 @@ public abstract class Sticker {
         return mMatrixValues[valueIndex];
     }
 
+    public boolean contains(float x, float y) {
+        Matrix tempMatrix = new Matrix();
+        tempMatrix.setRotate(-getCurrentAngle());
+        float[] unrotatedWrapperCorner = new float[8];
+        float[] unrotatedPoint = new float[2];
+        tempMatrix.mapPoints(unrotatedWrapperCorner, getMappedBoundPoints());
+        tempMatrix.mapPoints(unrotatedPoint, new float[]{x, y});
+        return StickerUtils.trapToRect(unrotatedWrapperCorner).contains(unrotatedPoint[0], unrotatedPoint[1]);
+    }
+
     public void release() {
     }
 

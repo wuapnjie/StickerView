@@ -2,11 +2,7 @@ package com.xiaopo.flying.stickerview;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,26 +33,20 @@ public class MainActivity extends AppCompatActivity {
 
         mStickerView = (StickerView) findViewById(R.id.sticker_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        final Bitmap bitmapReplace = BitmapFactory.decodeResource(getResources(), R.drawable.haizewang_2);
+
         mStickerView.setBackgroundColor(Color.WHITE);
         mStickerView.setLocked(false);
-
-        Drawable bubble = ContextCompat.getDrawable(getApplicationContext(), R.drawable.bubble_sticker);
-        final TextSticker textSticker = new TextSticker(getApplicationContext());
-        textSticker.setDrawable(scaleImage(bubble, 0.5f), new Rect(100, 100, 400, 250));
-        textSticker.setText(getString(R.string.text));
-        textSticker.resizeText();
-        mStickerView.addSticker(textSticker);
 
         mStickerView.setOnStickerClickListener(new StickerView.OnStickerClickListener() {
             @Override
             public void onStickerClick(Sticker sticker) {
-                if (sticker == textSticker) {
+                if (sticker instanceof TextSticker) {
+                    TextSticker textSticker = (TextSticker) sticker;
                     textSticker.setDrawable(ContextCompat.getDrawable(getApplicationContext(),
                             R.drawable.transparent_background));
                     textSticker.setText("Hello, world!");
-                    textSticker.setTextColor(Color.parseColor("#880000"));
-                    textSticker.setTextAlign(Layout.Alignment.ALIGN_OPPOSITE);
+                    textSticker.setTextColor(Color.BLACK);
+                    textSticker.setTextAlign(Layout.Alignment.ALIGN_CENTER);
                     textSticker.resizeText();
                     mStickerView.replace(textSticker);
                 }
@@ -87,13 +77,23 @@ public class MainActivity extends AppCompatActivity {
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 110);
         } else {
-            Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.haizewang_2);
-            Drawable drawable1 = ContextCompat.getDrawable(getApplicationContext(), R.drawable.haizewang_23);
-            Drawable drawable2 = ContextCompat.getDrawable(getApplicationContext(), R.drawable.haizewang_150);
-            mStickerView.addSticker(new DrawableSticker(drawable));
-            mStickerView.addSticker(new DrawableSticker(drawable1));
-            mStickerView.addSticker(new DrawableSticker(drawable2));
+            loadSticker();
         }
+    }
+
+    private void loadSticker() {
+        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.haizewang_215);
+        Drawable drawable1 = ContextCompat.getDrawable(getApplicationContext(), R.drawable.haizewang_23);
+        mStickerView.addSticker(new DrawableSticker(drawable));
+        mStickerView.addSticker(new DrawableSticker(drawable1));
+
+        Drawable bubble = ContextCompat.getDrawable(getApplicationContext(), R.drawable.bubble);
+        final TextSticker textSticker = new TextSticker(getApplicationContext());
+        textSticker.setDrawable(bubble);
+        textSticker.setText("Sticker\n");
+        textSticker.setMaxTextSize(14);
+        textSticker.resizeText();
+        mStickerView.addSticker(textSticker);
     }
 
     @Override
@@ -101,25 +101,8 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 110
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.haizewang_2);
-            Drawable drawable1 = ContextCompat.getDrawable(getApplicationContext(), R.drawable.haizewang_23);
-            Drawable drawable2 = ContextCompat.getDrawable(getApplicationContext(), R.drawable.haizewang_150);
-            mStickerView.addSticker(new DrawableSticker(drawable));
-            mStickerView.addSticker(new DrawableSticker(drawable1));
-            mStickerView.addSticker(new DrawableSticker(drawable2));
+            loadSticker();
         }
     }
 
-    public Drawable scaleImage (Drawable image, float scaleFactor) {
-        if ((image == null) || !(image instanceof BitmapDrawable)) {
-            return image;
-        }
-        Bitmap b = ((BitmapDrawable)image).getBitmap();
-        int sizeX = Math.round(image.getIntrinsicWidth() * scaleFactor);
-        int sizeY = Math.round(image.getIntrinsicHeight() * scaleFactor);
-        Bitmap bitmapResized = Bitmap.createScaledBitmap(b, sizeX, sizeY, false);
-        image = new BitmapDrawable(getResources(), bitmapResized);
-        return image;
-
-    }
 }

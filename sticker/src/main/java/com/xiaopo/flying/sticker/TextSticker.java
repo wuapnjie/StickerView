@@ -3,7 +3,6 @@ package com.xiaopo.flying.sticker;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -22,7 +21,7 @@ import android.util.TypedValue;
  * See https://adilatwork.blogspot.com/2014/08/android-textview-which-resizes-its-text.html
  * Notice: It's not efficient to add long text due to too much of
  * StaticLayout object allocation.
- *
+ * <p>
  * Created by liutao on 30/11/2016.
  */
 
@@ -173,8 +172,8 @@ public class TextSticker extends Sticker {
      * @param minTextSizeScaledPixels the minimum size to use for text in this view,
      *                                in scaled pixels.
      */
-    public void setMinTextSize(float size) {
-        mMinTextSizePixels = convertSpToPx(size);
+    public void setMinTextSize(float minTextSizeScaledPixels) {
+        mMinTextSizePixels = convertSpToPx(minTextSizeScaledPixels);
     }
 
     public void setLineSpacing(float add, float multiplier) {
@@ -253,6 +252,7 @@ public class TextSticker extends Sticker {
                     mLineSpacingExtra,
                     false);
 
+
             // Check that we have a least one line of rendered text
             if (staticLayout.getLineCount() > 0) {
                 // Since the line at the specific vertical position would be cut off,
@@ -298,7 +298,6 @@ public class TextSticker extends Sticker {
      * and uses a {@link StaticLayout} instance to measure the height of the text.
      *
      * @param source
-     * @param textPaint
      * @param availableWidthPixels
      * @param textSizePixels
      * @return the height of the text when placed in a view
