@@ -5,7 +5,7 @@ A view which can add sticker and zoom,drag,flip,delete it
 ![](https://github.com/wuapnjie/StickerView/blob/master/screenshots/screenshot1.png)
 ![](https://github.com/wuapnjie/StickerView/blob/master/screenshots/screenshot2.png)
 
-## Update
+## Usage
 
 In your **build.gradle**
 
