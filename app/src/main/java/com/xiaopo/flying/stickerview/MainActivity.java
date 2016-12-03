@@ -65,6 +65,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
+            public void onStickerZoomFinished(Sticker sticker) {
+                Log.d(TAG, "onStickerZoomFinished");
+            }
+
+            @Override
             public void onStickerFlipped(Sticker sticker) {
                 Log.d(TAG, "onStickerFlipped");
             }
