@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -23,7 +24,7 @@ import com.xiaopo.flying.stickerview.util.FileUtil;
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
-
+    private static final String TAG = MainActivity.class.getSimpleName();
     private StickerView mStickerView;
 
     @Override
@@ -37,9 +38,9 @@ public class MainActivity extends AppCompatActivity {
         mStickerView.setBackgroundColor(Color.WHITE);
         mStickerView.setLocked(false);
 
-        mStickerView.setOnStickerClickListener(new StickerView.OnStickerClickListener() {
+        mStickerView.setOnStickerOperationListener(new StickerView.OnStickerOperationListener() {
             @Override
-            public void onStickerClick(Sticker sticker) {
+            public void onStickerClicked(Sticker sticker) {
                 if (sticker instanceof TextSticker) {
                     TextSticker textSticker = (TextSticker) sticker;
                     textSticker.setDrawable(ContextCompat.getDrawable(getApplicationContext(),
@@ -50,6 +51,22 @@ public class MainActivity extends AppCompatActivity {
                     textSticker.resizeText();
                     mStickerView.replace(textSticker);
                 }
+                Log.d(TAG, "onStickerClicked");
+            }
+
+            @Override
+            public void onStickerDeleted(Sticker sticker) {
+                Log.d(TAG, "onStickerDeleted");
+            }
+
+            @Override
+            public void onStickerDragFinished(Sticker sticker) {
+                Log.d(TAG, "onStickerDragFinished");
+            }
+
+            @Override
+            public void onStickerFlipped(Sticker sticker) {
+                Log.d(TAG, "onStickerFlipped");
             }
         });
 

@@ -68,7 +68,7 @@ public class StickerView extends FrameLayout {
 
     private int mTouchSlop;
 
-    private OnStickerClickListener mOnStickerClickListener;
+    private OnStickerOperationListener mOnStickerOperationListener;
 
     public StickerView(Context context) {
         this(context, null);
@@ -222,6 +222,9 @@ public class StickerView extends FrameLayout {
 
             case MotionEvent.ACTION_UP:
                 if (mCurrentMode == ActionMode.DELETE && mHandlingSticker != null) {
+                    if (mOnStickerOperationListener != null) {
+                        mOnStickerOperationListener.onStickerDeleted(mHandlingSticker);
+                    }
                     mStickers.remove(mHandlingSticker);
                     mHandlingSticker.release();
                     mHandlingSticker = null;
@@ -233,7 +236,22 @@ public class StickerView extends FrameLayout {
                             mHandlingSticker.getCenterPoint().x, mHandlingSticker.getCenterPoint().y);
 
                     mHandlingSticker.setFlipped(!mHandlingSticker.isFlipped());
+                    if (mOnStickerOperationListener != null) {
+                        mOnStickerOperationListener.onStickerFlipped(mHandlingSticker);
+                    }
                     invalidate();
+                }
+
+                if (mCurrentMode == ActionMode.DRAG && mHandlingSticker != null) {
+                    if (mOnStickerOperationListener != null) {
+                        mOnStickerOperationListener.onStickerDragFinished(mHandlingSticker);
+                    }
+                }
+
+                if (mCurrentMode == ActionMode.ZOOM_WITH_ICON && mHandlingSticker != null) {
+                    if (mOnStickerOperationListener != null) {
+                        mOnStickerOperationListener.onStickerDragFinished(mHandlingSticker);
+                    }
                 }
 
                 if (mCurrentMode == ActionMode.DRAG
@@ -241,8 +259,8 @@ public class StickerView extends FrameLayout {
                         && Math.abs(event.getY() - mDownY) < mTouchSlop
                         && mHandlingSticker != null) {
                     mCurrentMode = ActionMode.CLICK;
-                    if (mOnStickerClickListener != null) {
-                        mOnStickerClickListener.onStickerClick(mHandlingSticker);
+                    if (mOnStickerOperationListener != null) {
+                        mOnStickerOperationListener.onStickerClicked(mHandlingSticker);
                     }
                 }
 
@@ -250,6 +268,11 @@ public class StickerView extends FrameLayout {
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
+                if (mCurrentMode == ActionMode.ZOOM_WITH_TWO_FINGER && mHandlingSticker != null) {
+                    if (mOnStickerOperationListener != null) {
+                        mOnStickerOperationListener.onStickerDragFinished(mHandlingSticker);
+                    }
+                }
                 mCurrentMode = ActionMode.NONE;
                 break;
 
@@ -442,6 +465,10 @@ public class StickerView extends FrameLayout {
     }
 
     public void addSticker(Sticker sticker) {
+        if (sticker == null) {
+            Log.e(TAG, "Sticker to be added is null!");
+            return;
+        }
         float offsetX = (getWidth() - sticker.getWidth()) / 2;
         float offsetY = (getHeight() - sticker.getHeight()) / 2;
         sticker.getMatrix().postTranslate(offsetX, offsetY);
@@ -485,10 +512,6 @@ public class StickerView extends FrameLayout {
         invalidate();
     }
 
-    public void setOnStickerClickListener(OnStickerClickListener onStickerClickListener) {
-        mOnStickerClickListener = onStickerClickListener;
-    }
-
     public BitmapStickerIcon getFlipIcon() {
         return mFlipIcon;
     }
@@ -516,7 +539,14 @@ public class StickerView extends FrameLayout {
         postInvalidate();
     }
 
-    public interface OnStickerClickListener {
-        void onStickerClick(Sticker sticker);
+    public void setOnStickerOperationListener(OnStickerOperationListener onStickerOperationListener) {
+        mOnStickerOperationListener = onStickerOperationListener;
+    }
+
+    public interface OnStickerOperationListener {
+        void onStickerClicked(Sticker sticker);
+        void onStickerDeleted(Sticker sticker);
+        void onStickerDragFinished(Sticker sticker);
+        void onStickerFlipped(Sticker sticker);
     }
 }

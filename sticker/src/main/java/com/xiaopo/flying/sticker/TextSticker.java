@@ -215,7 +215,6 @@ public class TextSticker extends Sticker {
         int targetTextHeightPixels = getTextHeightPixels(text,
                 availableWidthPixels, targetTextSizePixels);
 
-        int count = 0;
         // Until we either fit within our TextView
         // or we have reached our minimum text size,
         // incrementally try smaller sizes
@@ -229,9 +228,7 @@ public class TextSticker extends Sticker {
                     text,
                     availableWidthPixels,
                     targetTextSizePixels);
-            ++count;
         }
-        Log.d(TAG, "Count: " + count);
 
         // If we have reached our minimum text size and the text still doesn't fit,
         // append an ellipsis
