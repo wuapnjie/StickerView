@@ -47,10 +47,11 @@ public void setFlipIcon(flipIcon)
 
 ## Update
 
-* 2016/10/11 Add horizontal flip function
-* 2016/10/12 Add Lock function to disable handle stickers
-* 2016/11/30 Added text stickers which supports both text and image background. Thanks to [taoliuh](https://github.com/taoliuh)
-* 2016/12/02 Fixed the region of sticker bigger bug,and add more custom configure.
+* **2016/10/11** Add horizontal flip function
+* **2016/10/12** Add Lock function to disable handle stickers
+* **2016/11/30** Added text stickers which supports both text and image background. Thanks to [taoliuh](https://github.com/taoliuh)
+* **2016/12/02** Fixed the region of sticker bigger bug,and add more custom configure.
+* **2016/12/03 Add** more callback
 
 ## Licence
 

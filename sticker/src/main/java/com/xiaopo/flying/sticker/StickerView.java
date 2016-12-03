@@ -13,7 +13,6 @@ import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 
 import java.io.File;
@@ -66,7 +65,7 @@ public class StickerView extends FrameLayout {
 
     private boolean mLocked;
 
-    private int mTouchSlop;
+    private int mTouchSlop = 3;
 
     private OnStickerOperationListener mOnStickerOperationListener;
 
@@ -80,8 +79,6 @@ public class StickerView extends FrameLayout {
 
     public StickerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
-        mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
 
         mBorderPaint = new Paint();
         mBorderPaint.setAntiAlias(true);
@@ -242,15 +239,10 @@ public class StickerView extends FrameLayout {
                     invalidate();
                 }
 
-                if (mCurrentMode == ActionMode.DRAG && mHandlingSticker != null) {
-                    if (mOnStickerOperationListener != null) {
-                        mOnStickerOperationListener.onStickerDragFinished(mHandlingSticker);
-                    }
-                }
 
-                if (mCurrentMode == ActionMode.ZOOM_WITH_ICON && mHandlingSticker != null) {
+                if ((mCurrentMode == ActionMode.ZOOM_WITH_ICON || mCurrentMode == ActionMode.ZOOM_WITH_TWO_FINGER) && mHandlingSticker != null) {
                     if (mOnStickerOperationListener != null) {
-                        mOnStickerOperationListener.onStickerDragFinished(mHandlingSticker);
+                        mOnStickerOperationListener.onStickerZoomFinished(mHandlingSticker);
                     }
                 }
 
@@ -261,6 +253,12 @@ public class StickerView extends FrameLayout {
                     mCurrentMode = ActionMode.CLICK;
                     if (mOnStickerOperationListener != null) {
                         mOnStickerOperationListener.onStickerClicked(mHandlingSticker);
+                    }
+                }
+
+                if (mCurrentMode == ActionMode.DRAG && mHandlingSticker != null) {
+                    if (mOnStickerOperationListener != null) {
+                        mOnStickerOperationListener.onStickerDragFinished(mHandlingSticker);
                     }
                 }
 
@@ -287,7 +285,6 @@ public class StickerView extends FrameLayout {
             case NONE:
                 break;
             case DRAG:
-
                 if (mHandlingSticker != null) {
                     mMoveMatrix.set(mDownMatrix);
                     mMoveMatrix.postTranslate(event.getX() - mDownX, event.getY() - mDownY);
@@ -559,8 +556,13 @@ public class StickerView extends FrameLayout {
 
     public interface OnStickerOperationListener {
         void onStickerClicked(Sticker sticker);
+
         void onStickerDeleted(Sticker sticker);
+
         void onStickerDragFinished(Sticker sticker);
+
+        void onStickerZoomFinished(Sticker sticker);
+
         void onStickerFlipped(Sticker sticker);
     }
 }
