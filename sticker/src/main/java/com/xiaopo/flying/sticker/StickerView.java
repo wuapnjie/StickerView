@@ -458,7 +458,7 @@ public class StickerView extends FrameLayout {
                 // reset scale, angle, and put it in center
                 float offsetX = (getWidth() - mHandlingSticker.getWidth()) / 2;
                 float offsetY = (getHeight() - mHandlingSticker.getHeight()) / 2;
-                mHandlingSticker.getMatrix().postTranslate(offsetX, offsetY);
+                sticker.getMatrix().postTranslate(offsetX, offsetY);
 
                 float scaleFactor;
                 if (getWidth() < getHeight()) {
@@ -471,8 +471,8 @@ public class StickerView extends FrameLayout {
             int index = mStickers.indexOf(mHandlingSticker);
             mStickers.set(index, sticker);
             mHandlingSticker = sticker;
-            invalidate();
         }
+        invalidate();
     }
 
     public void addSticker(Sticker sticker) {

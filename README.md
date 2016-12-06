@@ -10,7 +10,7 @@ A view which can add sticker and zoom,drag,flip,delete it
 In your **build.gradle**
 
 ```gradle
-compile 'com.flying.xiaopo:sticker:1.2.1'
+compile 'com.flying.xiaopo:sticker:1.2.2'
 ```
 
 **Tips**:StickerView extends FrameLayout

@@ -90,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "the file is null", Toast.LENGTH_SHORT).show();
                         }
                     }
+//                    mStickerView.replace(new DrawableSticker(
+//                            ContextCompat.getDrawable(MainActivity.this, R.drawable.haizewang_90)
+//                    ));
                     return false;
                 }
             });
