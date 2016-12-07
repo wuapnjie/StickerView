@@ -494,6 +494,8 @@ public class StickerView extends FrameLayout {
 
         mHandlingSticker = sticker;
         mStickers.add(sticker);
+
+        invalidate();
     }
 
     public float[] getStickerPoints(Sticker sticker) {
