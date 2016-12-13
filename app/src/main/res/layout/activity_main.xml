@@ -5,32 +5,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.xiaopo.flying.stickerview.MainActivity">
+    tools:context="com.xiaopo.flying.stickerview.MainActivity"
+    >
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/colorPrimary">
+  <android.support.v7.widget.Toolbar
+      android:id="@+id/toolbar"
+      android:layout_width="match_parent"
+      android:layout_height="56dp"
+      android:background="@color/colorPrimary"
+      >
 
-    </android.support.v7.widget.Toolbar>
+  </android.support.v7.widget.Toolbar>
 
-    <com.xiaopo.flying.sticker.StickerView
-        android:id="@+id/sticker_view"
+  <com.xiaopo.flying.sticker.StickerView
+      android:id="@+id/sticker_view"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_gravity="center"
+      >
+
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center">
+        android:src="@drawable/haizewang_90"
+        />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/haizewang_90" />
-
-        <ImageView
-            android:src="@drawable/border"
-            android:scaleType="fitXY"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </com.xiaopo.flying.sticker.StickerView>
+    <ImageView
+        android:src="@drawable/border"
+        android:scaleType="fitXY"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+  </com.xiaopo.flying.sticker.StickerView>
 
 </LinearLayout>
