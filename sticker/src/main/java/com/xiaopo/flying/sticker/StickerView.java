@@ -164,6 +164,21 @@ public class StickerView extends FrameLayout {
     icon.getMatrix().postTranslate(x - icon.getWidth() / 2, y - icon.getHeight() / 2);
   }
 
+  @Override public boolean onInterceptTouchEvent(MotionEvent ev) {
+    switch (ev.getAction()) {
+      case MotionEvent.ACTION_DOWN:
+        mDownX = ev.getX();
+        mDownY = ev.getY();
+
+        return !(!checkIconTouched(mDeleteIcon) &&
+            !checkIconTouched(mZoomIcon) &&
+            !checkIconTouched(mFlipIcon) &&
+            findHandlingSticker() == null);
+    }
+
+    return super.onInterceptTouchEvent(ev);
+  }
+
   @Override public boolean onTouchEvent(MotionEvent event) {
     if (mLocked) return super.onTouchEvent(event);
 

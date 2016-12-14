@@ -10,7 +10,7 @@ A view which can add sticker and zoom,drag,flip,delete it
 In your **build.gradle**
 
 ```gradle
-compile 'com.flying.xiaopo:sticker:1.2.3'
+compile 'com.flying.xiaopo:sticker:1.2.4'
 ```
 
 **Tips**:StickerView extends FrameLayout
@@ -52,6 +52,7 @@ public void setFlipIcon(flipIcon)
 * **2016/11/30** Added text stickers which supports both text and image background. Thanks to [taoliuh](https://github.com/taoliuh)
 * **2016/12/02** Fixed the region of sticker bigger bug,and add more custom configure.
 * **2016/12/03** Add more callback
+* **2016/12/14** Add [PhotoView](https://github.com/chrisbanes/PhotoView) support
 
 ## Todo
 [] Constrain the sticker's moving area
