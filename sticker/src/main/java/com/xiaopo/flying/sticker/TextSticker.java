@@ -85,8 +85,10 @@ public class TextSticker extends Sticker {
   @Override public void draw(Canvas canvas) {
     canvas.save();
     canvas.concat(mMatrix);
-    mDrawable.setBounds(mRealBounds);
-    mDrawable.draw(canvas);
+    if (mDrawable != null) {
+      mDrawable.setBounds(mRealBounds);
+      mDrawable.draw(canvas);
+    }
     canvas.restore();
 
     canvas.save();

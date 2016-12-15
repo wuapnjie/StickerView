@@ -165,6 +165,8 @@ public class StickerView extends FrameLayout {
   }
 
   @Override public boolean onInterceptTouchEvent(MotionEvent ev) {
+    if (mLocked) return super.onInterceptTouchEvent(ev);
+
     switch (ev.getAction()) {
       case MotionEvent.ACTION_DOWN:
         mDownX = ev.getX();
@@ -455,11 +457,11 @@ public class StickerView extends FrameLayout {
     invalidate();
   }
 
-  public void replace(Sticker sticker) {
-    replace(sticker, true);
+  public boolean replace(Sticker sticker) {
+    return replace(sticker, true);
   }
 
-  public void replace(Sticker sticker, boolean needStayState) {
+  public boolean replace(Sticker sticker, boolean needStayState) {
     if (mHandlingSticker != null && sticker != null) {
       if (needStayState) {
         sticker.getMatrix().set(mHandlingSticker.getMatrix());
@@ -483,6 +485,42 @@ public class StickerView extends FrameLayout {
       int index = mStickers.indexOf(mHandlingSticker);
       mStickers.set(index, sticker);
       mHandlingSticker = sticker;
+
+      invalidate();
+      return true;
+    }else {
+      return false;
+    }
+  }
+
+  public boolean remove(Sticker sticker) {
+    if (mStickers.contains(sticker)) {
+      mStickers.remove(sticker);
+      if (mOnStickerOperationListener != null) {
+        mOnStickerOperationListener.onStickerDeleted(sticker);
+      }
+      if (mHandlingSticker == sticker) {
+        mHandlingSticker = null;
+      }
+      invalidate();
+
+      return true;
+    } else {
+      Log.d(TAG, "remove: the sticker is not in this StickerView");
+
+      return false;
+    }
+  }
+
+  public boolean removeCurrentSticker() {
+    return remove(mHandlingSticker);
+  }
+
+  public void removeAllStickers() {
+    mStickers.clear();
+    if (mHandlingSticker != null) {
+      mHandlingSticker.release();
+      mHandlingSticker = null;
     }
     invalidate();
   }
@@ -527,6 +565,14 @@ public class StickerView extends FrameLayout {
     Canvas canvas = new Canvas(bitmap);
     this.draw(canvas);
     return bitmap;
+  }
+
+  public int getStickerCount(){
+    return mStickers.size();
+  }
+
+  public boolean isNoneSticker(){
+    return getStickerCount() == 0;
   }
 
   public boolean isLocked() {

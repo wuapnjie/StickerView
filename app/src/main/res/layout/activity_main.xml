@@ -20,8 +20,9 @@
   <com.xiaopo.flying.sticker.StickerView
       android:id="@+id/sticker_view"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
+      android:layout_height="0dp"
       android:layout_gravity="center"
+      android:layout_weight="1"
       >
 
     <uk.co.senab.photoview.PhotoView
@@ -31,11 +32,65 @@
         />
 
     <ImageView
-        android:src="@drawable/border"
-        android:scaleType="fitXY"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/border"
         />
   </com.xiaopo.flying.sticker.StickerView>
 
+
+  <HorizontalScrollView
+      android:background="@android:color/black"
+      android:scrollbars="none"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      >
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+      <Button
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:background="?attr/selectableItemBackground"
+          android:onClick="reset"
+          android:text="Reset"
+          />
+
+      <Button
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:background="?attr/selectableItemBackground"
+          android:onClick="testReplace"
+          android:text="Replace"
+          />
+
+      <Button
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:background="?attr/selectableItemBackground"
+          android:onClick="testRemove"
+          android:text="Remove"
+          />
+
+      <Button
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:background="?attr/selectableItemBackground"
+          android:onClick="testRemoveAll"
+          android:text="RemoveAll"
+          />
+
+      <Button
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:background="?attr/selectableItemBackground"
+          android:onClick="testLock"
+          android:text="Lock"
+          />
+
+    </LinearLayout>
+  </HorizontalScrollView>
 </LinearLayout>

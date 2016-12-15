@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Layout;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.xiaopo.flying.sticker.DrawableSticker;
@@ -26,6 +27,7 @@ import java.io.File;
 public class MainActivity extends AppCompatActivity {
   private static final String TAG = MainActivity.class.getSimpleName();
   private StickerView mStickerView;
+  private TextSticker mSticker;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -37,17 +39,21 @@ public class MainActivity extends AppCompatActivity {
     mStickerView.setBackgroundColor(Color.WHITE);
     mStickerView.setLocked(false);
 
+    mSticker = new TextSticker(this);
+
+    mSticker.setDrawable(
+        ContextCompat.getDrawable(getApplicationContext(), R.drawable.transparent_background));
+    mSticker.setText("Hello, world!");
+    mSticker.setTextColor(Color.BLACK);
+    mSticker.setTextAlign(Layout.Alignment.ALIGN_CENTER);
+    mSticker.resizeText();
+
     mStickerView.setOnStickerOperationListener(new StickerView.OnStickerOperationListener() {
       @Override public void onStickerClicked(Sticker sticker) {
+        //mStickerView.removeAllSticker();
         if (sticker instanceof TextSticker) {
-          TextSticker textSticker = (TextSticker) sticker;
-          textSticker.setDrawable(ContextCompat.getDrawable(getApplicationContext(),
-              R.drawable.transparent_background));
-          textSticker.setText("Hello, world!");
-          textSticker.setTextColor(Color.BLACK);
-          textSticker.setTextAlign(Layout.Alignment.ALIGN_CENTER);
-          textSticker.resizeText();
-          mStickerView.replace(textSticker);
+          mStickerView.replace(mSticker);
+          mStickerView.invalidate();
         }
         Log.d(TAG, "onStickerClicked");
       }
@@ -126,5 +132,36 @@ public class MainActivity extends AppCompatActivity {
     if (requestCode == 110 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
       loadSticker();
     }
+  }
+
+  public void testReplace(View view) {
+    if (mStickerView.replace(mSticker)) {
+      Toast.makeText(MainActivity.this, "Replace Sticker successfully!", Toast.LENGTH_SHORT).show();
+    } else {
+      Toast.makeText(MainActivity.this, "Replace Sticker failed!", Toast.LENGTH_SHORT).show();
+    }
+  }
+
+  public void testLock(View view) {
+    mStickerView.setLocked(!mStickerView.isLocked());
+  }
+
+  public void testRemove(View view) {
+    if (mStickerView.removeCurrentSticker()) {
+      Toast.makeText(MainActivity.this, "Remove current Sticker successfully!", Toast.LENGTH_SHORT)
+          .show();
+    } else {
+      Toast.makeText(MainActivity.this, "Remove current Sticker failed!", Toast.LENGTH_SHORT)
+          .show();
+    }
+  }
+
+  public void testRemoveAll(View view) {
+    mStickerView.removeAllStickers();
+  }
+
+  public void reset(View view) {
+    mStickerView.removeAllStickers();
+    loadSticker();
   }
 }
