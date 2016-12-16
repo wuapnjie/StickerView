@@ -595,7 +595,7 @@ public class StickerView extends FrameLayout {
   }
 
   public void setLocked(boolean locked) {
-    locked = locked;
+    this.locked = locked;
     invalidate();
   }
 
@@ -604,7 +604,7 @@ public class StickerView extends FrameLayout {
   }
 
   public void setFlipIcon(BitmapStickerIcon flipIcon) {
-    flipIcon = flipIcon;
+    this.flipIcon = flipIcon;
     postInvalidate();
   }
 
@@ -613,7 +613,7 @@ public class StickerView extends FrameLayout {
   }
 
   public void setZoomIcon(BitmapStickerIcon zoomIcon) {
-    zoomIcon = zoomIcon;
+    this.zoomIcon = zoomIcon;
     postInvalidate();
   }
 
@@ -622,7 +622,7 @@ public class StickerView extends FrameLayout {
   }
 
   public void setDeleteIcon(BitmapStickerIcon deleteIcon) {
-    deleteIcon = deleteIcon;
+    this.deleteIcon = deleteIcon;
     postInvalidate();
   }
 
@@ -635,7 +635,7 @@ public class StickerView extends FrameLayout {
   }
 
   public void setOnStickerOperationListener(OnStickerOperationListener onStickerOperationListener) {
-    onStickerOperationListener = onStickerOperationListener;
+    this.onStickerOperationListener = onStickerOperationListener;
   }
 
   public interface OnStickerOperationListener {

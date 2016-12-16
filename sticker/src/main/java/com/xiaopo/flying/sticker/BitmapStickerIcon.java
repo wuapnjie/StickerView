@@ -46,7 +46,7 @@ public class BitmapStickerIcon extends DrawableSticker {
   }
 
   public void setIconRadius(float iconRadius) {
-    iconRadius = iconRadius;
+    this.iconRadius = iconRadius;
   }
 
   public float getIconExtraRadius() {
@@ -54,6 +54,6 @@ public class BitmapStickerIcon extends DrawableSticker {
   }
 
   public void setIconExtraRadius(float iconExtraRadius) {
-    iconExtraRadius = iconExtraRadius;
+    this.iconExtraRadius = iconExtraRadius;
   }
 }

@@ -23,7 +23,7 @@ public abstract class Sticker {
   }
 
   public void setFlipped(boolean flipped) {
-    isFlipped = flipped;
+    this.isFlipped = flipped;
   }
 
   public Matrix getMatrix() {
@@ -31,7 +31,7 @@ public abstract class Sticker {
   }
 
   public void setMatrix(Matrix matrix) {
-    matrix.set(matrix);
+    this.matrix.set(matrix);
   }
 
   public abstract void draw(Canvas canvas);

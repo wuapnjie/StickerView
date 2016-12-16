@@ -126,13 +126,13 @@ public class TextSticker extends Sticker {
   }
 
   @Override public void setDrawable(Drawable drawable) {
-    drawable = drawable;
+    this.drawable = drawable;
     realBounds.set(0, 0, getWidth(), getHeight());
     textRect.set(0, 0, getWidth(), getHeight());
   }
 
   public void setDrawable(Drawable drawable, Rect region) {
-    drawable = drawable;
+    this.drawable = drawable;
     realBounds.set(0, 0, getWidth(), getHeight());
     if (region == null) {
       textRect.set(0, 0, getWidth(), getHeight());
@@ -150,7 +150,7 @@ public class TextSticker extends Sticker {
   }
 
   public void setTextAlign(Layout.Alignment alignment) {
-    alignment = alignment;
+    this.alignment = alignment;
   }
 
   public void setMaxTextSize(float size) {
@@ -159,7 +159,7 @@ public class TextSticker extends Sticker {
 
   public void setMaxTextSize(int unit, float size) {
     textPaint.setTextSize(convertSpToPx(size));
-    maxTextSizePixels = textPaint.getTextSize();
+    this.maxTextSizePixels = textPaint.getTextSize();
   }
 
   /**
@@ -169,12 +169,12 @@ public class TextSticker extends Sticker {
    * in scaled pixels.
    */
   public void setMinTextSize(float minTextSizeScaledPixels) {
-    minTextSizePixels = convertSpToPx(minTextSizeScaledPixels);
+    this.minTextSizePixels = convertSpToPx(minTextSizeScaledPixels);
   }
 
   public void setLineSpacing(float add, float multiplier) {
-    lineSpacingMultiplier = multiplier;
-    lineSpacingExtra = add;
+    this.lineSpacingMultiplier = multiplier;
+    this.lineSpacingExtra = add;
   }
 
   public void setText(String text) {
