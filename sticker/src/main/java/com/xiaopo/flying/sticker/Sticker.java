@@ -14,24 +14,24 @@ import android.support.annotation.NonNull;
 public abstract class Sticker {
   protected static final String TAG = "Sticker";
 
-  protected Matrix mMatrix;
-  protected boolean mIsFlipped;
-  private float[] mMatrixValues = new float[9];
+  protected Matrix matrix;
+  protected boolean isFlipped;
+  private float[] matrixValues = new float[9];
 
   public boolean isFlipped() {
-    return mIsFlipped;
+    return isFlipped;
   }
 
   public void setFlipped(boolean flipped) {
-    mIsFlipped = flipped;
+    isFlipped = flipped;
   }
 
   public Matrix getMatrix() {
-    return mMatrix;
+    return matrix;
   }
 
   public void setMatrix(Matrix matrix) {
-    mMatrix.set(matrix);
+    matrix.set(matrix);
   }
 
   public abstract void draw(Canvas canvas);
@@ -45,7 +45,7 @@ public abstract class Sticker {
   public abstract Drawable getDrawable();
 
   public float[] getBoundPoints() {
-    if (!mIsFlipped) {
+    if (!isFlipped) {
       return new float[] {
           0f, 0f, getWidth(), 0f, 0f, getHeight(), getWidth(), getHeight()
       };
@@ -58,13 +58,13 @@ public abstract class Sticker {
 
   public float[] getMappedBoundPoints() {
     float[] dst = new float[8];
-    mMatrix.mapPoints(dst, getBoundPoints());
+    matrix.mapPoints(dst, getBoundPoints());
     return dst;
   }
 
   public float[] getMappedPoints(float[] src) {
     float[] dst = new float[src.length];
-    mMatrix.mapPoints(dst, src);
+    matrix.mapPoints(dst, src);
     return dst;
   }
 
@@ -74,7 +74,7 @@ public abstract class Sticker {
 
   public RectF getMappedBound() {
     RectF dst = new RectF();
-    mMatrix.mapRect(dst, getBound());
+    matrix.mapRect(dst, getBound());
     return dst;
   }
 
@@ -91,15 +91,15 @@ public abstract class Sticker {
   }
 
   public float getCurrentScale() {
-    return getMatrixScale(mMatrix);
+    return getMatrixScale(matrix);
   }
 
   public float getCurrentHeight() {
-    return getMatrixScale(mMatrix) * getHeight();
+    return getMatrixScale(matrix) * getHeight();
   }
 
   public float getCurrentWidth() {
-    return getMatrixScale(mMatrix) * getWidth();
+    return getMatrixScale(matrix) * getWidth();
   }
 
   /**
@@ -114,7 +114,7 @@ public abstract class Sticker {
    * @return - current image rotation angle.
    */
   public float getCurrentAngle() {
-    return getMatrixAngle(mMatrix);
+    return getMatrixAngle(matrix);
   }
 
   /**
@@ -126,8 +126,8 @@ public abstract class Sticker {
   }
 
   private float getMatrixValue(@NonNull Matrix matrix, @IntRange(from = 0, to = 9) int valueIndex) {
-    matrix.getValues(mMatrixValues);
-    return mMatrixValues[valueIndex];
+    matrix.getValues(matrixValues);
+    return matrixValues[valueIndex];
   }
 
   public boolean contains(float x, float y) {

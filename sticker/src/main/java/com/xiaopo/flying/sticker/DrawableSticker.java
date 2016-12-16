@@ -10,43 +10,43 @@ import android.graphics.drawable.Drawable;
  */
 public class DrawableSticker extends Sticker {
 
-  private Drawable mDrawable;
-  private Rect mRealBounds;
+  private Drawable drawable;
+  private Rect realBounds;
 
   public DrawableSticker(Drawable drawable) {
-    mDrawable = drawable;
-    mMatrix = new Matrix();
-    mRealBounds = new Rect(0, 0, getWidth(), getHeight());
+    this.drawable = drawable;
+    this.matrix = new Matrix();
+    realBounds = new Rect(0, 0, getWidth(), getHeight());
   }
 
   @Override public Drawable getDrawable() {
-    return mDrawable;
+    return drawable;
   }
 
   @Override public void setDrawable(Drawable drawable) {
-    mDrawable = drawable;
+    this.drawable = drawable;
   }
 
   @Override public void draw(Canvas canvas) {
     canvas.save();
-    canvas.concat(mMatrix);
-    mDrawable.setBounds(mRealBounds);
-    mDrawable.draw(canvas);
+    canvas.concat(matrix);
+    drawable.setBounds(realBounds);
+    drawable.draw(canvas);
     canvas.restore();
   }
 
   @Override public int getWidth() {
-    return mDrawable.getIntrinsicWidth();
+    return drawable.getIntrinsicWidth();
   }
 
   @Override public int getHeight() {
-    return mDrawable.getIntrinsicHeight();
+    return drawable.getIntrinsicHeight();
   }
 
   @Override public void release() {
     super.release();
-    if (mDrawable != null) {
-      mDrawable = null;
+    if (drawable != null) {
+      drawable = null;
     }
   }
 }

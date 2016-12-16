@@ -11,8 +11,8 @@ public class BitmapStickerIcon extends DrawableSticker {
   public static final float DEFAULT_ICON_RADIUS = 30f;
   public static final float DEFAULT_ICON_EXTRA_RADIUS = 10f;
 
-  private float mIconRadius = DEFAULT_ICON_RADIUS;
-  private float mIconExtraRadius = DEFAULT_ICON_EXTRA_RADIUS;
+  private float iconRadius = DEFAULT_ICON_RADIUS;
+  private float iconExtraRadius = DEFAULT_ICON_EXTRA_RADIUS;
   private float x;
   private float y;
 
@@ -21,7 +21,7 @@ public class BitmapStickerIcon extends DrawableSticker {
   }
 
   public void draw(Canvas canvas, Paint paint) {
-    canvas.drawCircle(x, y, mIconRadius, paint);
+    canvas.drawCircle(x, y, iconRadius, paint);
     super.draw(canvas);
   }
 
@@ -42,18 +42,18 @@ public class BitmapStickerIcon extends DrawableSticker {
   }
 
   public float getIconRadius() {
-    return mIconRadius;
+    return iconRadius;
   }
 
   public void setIconRadius(float iconRadius) {
-    mIconRadius = iconRadius;
+    iconRadius = iconRadius;
   }
 
   public float getIconExtraRadius() {
-    return mIconExtraRadius;
+    return iconExtraRadius;
   }
 
   public void setIconExtraRadius(float iconExtraRadius) {
-    mIconExtraRadius = iconExtraRadius;
+    iconExtraRadius = iconExtraRadius;
   }
 }
