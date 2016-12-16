@@ -1,4 +1,7 @@
-# StickerView
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-StickerView-brightgreen.svg?style=flat)]() 
+StickerView
+=========
+
 A view which can add sticker and zoom,drag,flip,delete it
 
 ## Screenshots
