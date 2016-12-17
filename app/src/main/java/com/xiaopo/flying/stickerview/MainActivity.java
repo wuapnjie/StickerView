@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     stickerView.setBackgroundColor(Color.WHITE);
     stickerView.setLocked(false);
+    stickerView.setConstrained(true);
 
     sticker = new TextSticker(this);
 
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onStickerFlipped");
       }
 
-      @Override public void onDoubleTapped(Sticker sticker) {
+      @Override public void onStickerDoubleTapped(Sticker sticker) {
         Log.d(TAG, "onDoubleTapped: double tap will be with two click");
       }
     });

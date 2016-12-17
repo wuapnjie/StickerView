@@ -34,7 +34,6 @@ public class StickerView extends FrameLayout {
     DELETE,  //delete the handling sticker
     FLIP_HORIZONTAL, //horizontal flip the sticker
     CLICK    //Click the Sticker
-    ;
   }
 
   private static final String TAG = "StickerView";
@@ -55,7 +54,7 @@ public class StickerView extends FrameLayout {
   //the first point down position
   private float downX;
   private float downY;
-  
+
   private float oldDistance = 0f;
   private float oldRotation = 0f;
 
@@ -67,6 +66,7 @@ public class StickerView extends FrameLayout {
   private Sticker handlingSticker;
 
   private boolean locked;
+  private boolean constrained;
 
   private int touchSlop = 3;
 
@@ -103,7 +103,6 @@ public class StickerView extends FrameLayout {
         ContextCompat.getDrawable(getContext(), R.drawable.ic_scale_white_18dp));
     flipIcon = new BitmapStickerIcon(
         ContextCompat.getDrawable(getContext(), R.drawable.ic_flip_white_18dp));
-
   }
 
   @Override protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -280,9 +279,9 @@ public class StickerView extends FrameLayout {
           if (onStickerOperationListener != null) {
             onStickerOperationListener.onStickerClicked(handlingSticker);
           }
-          if (currentTime - lastClickTime < minClickDelayTime){
-            if (onStickerOperationListener!=null){
-              onStickerOperationListener.onDoubleTapped(handlingSticker);
+          if (currentTime - lastClickTime < minClickDelayTime) {
+            if (onStickerOperationListener != null) {
+              onStickerOperationListener.onStickerDoubleTapped(handlingSticker);
             }
           }
         }
@@ -316,9 +315,13 @@ public class StickerView extends FrameLayout {
         break;
       case DRAG:
         if (handlingSticker != null) {
+          float moveX = event.getX() - downX;
+          float moveY = event.getY() - downY;
           moveMatrix.set(downMatrix);
           moveMatrix.postTranslate(event.getX() - downX, event.getY() - downY);
           handlingSticker.getMatrix().set(moveMatrix);
+          //constrain sticker
+          if (constrained) constrainSticker();
         }
         break;
       case ZOOM_WITH_TWO_FINGER:
@@ -337,10 +340,8 @@ public class StickerView extends FrameLayout {
 
       case ZOOM_WITH_ICON:
         if (handlingSticker != null) {
-          float newDistance =
-              calculateDistance(midPoint.x, midPoint.y, event.getX(), event.getY());
-          float newRotation =
-              calculateRotation(midPoint.x, midPoint.y, event.getX(), event.getY());
+          float newDistance = calculateDistance(midPoint.x, midPoint.y, event.getX(), event.getY());
+          float newRotation = calculateRotation(midPoint.x, midPoint.y, event.getX(), event.getY());
 
           moveMatrix.set(downMatrix);
           moveMatrix.postScale(newDistance / oldDistance, newDistance / oldDistance, midPoint.x,
@@ -351,6 +352,29 @@ public class StickerView extends FrameLayout {
 
         break;
     }// end of switch(currentMode)
+  }
+
+  private void constrainSticker() {
+    float moveX = 0;
+    float moveY = 0;
+    PointF currentCenterPoint = handlingSticker.getMappedCenterPoint();
+    if (currentCenterPoint.x < 0) {
+      moveX = -currentCenterPoint.x;
+    }
+
+    if (currentCenterPoint.x > getWidth()) {
+      moveX = getWidth() - currentCenterPoint.x;
+    }
+
+    if (currentCenterPoint.y < 0) {
+      moveY = -currentCenterPoint.y;
+    }
+
+    if (currentCenterPoint.y > getHeight()) {
+      moveY = getHeight() - currentCenterPoint.y;
+    }
+
+    handlingSticker.getMatrix().postTranslate(moveX, moveY);
   }
 
   private boolean checkIconTouched(BitmapStickerIcon icon) {
@@ -503,7 +527,7 @@ public class StickerView extends FrameLayout {
 
       invalidate();
       return true;
-    }else {
+    } else {
       return false;
     }
   }
@@ -582,11 +606,11 @@ public class StickerView extends FrameLayout {
     return bitmap;
   }
 
-  public int getStickerCount(){
+  public int getStickerCount() {
     return stickers.size();
   }
 
-  public boolean isNoneSticker(){
+  public boolean isNoneSticker() {
     return getStickerCount() == 0;
   }
 
@@ -634,6 +658,15 @@ public class StickerView extends FrameLayout {
     return minClickDelayTime;
   }
 
+  public boolean isConstrained() {
+    return constrained;
+  }
+
+  public void setConstrained(boolean constrained) {
+    this.constrained = constrained;
+    postInvalidate();
+  }
+
   public void setOnStickerOperationListener(OnStickerOperationListener onStickerOperationListener) {
     this.onStickerOperationListener = onStickerOperationListener;
   }
@@ -649,6 +682,6 @@ public class StickerView extends FrameLayout {
 
     void onStickerFlipped(Sticker sticker);
 
-    void onDoubleTapped(Sticker sticker);
+    void onStickerDoubleTapped(Sticker sticker);
   }
 }
