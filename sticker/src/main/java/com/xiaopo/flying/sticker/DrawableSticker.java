@@ -6,7 +6,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
 /**
- * Created by snowbean on 16-8-6.
+ * @author wupanjie
  */
 public class DrawableSticker extends Sticker {
 

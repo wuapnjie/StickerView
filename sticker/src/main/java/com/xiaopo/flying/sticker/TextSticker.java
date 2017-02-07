@@ -10,7 +10,6 @@ import android.support.v4.content.ContextCompat;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
-import android.util.Log;
 import android.util.TypedValue;
 
 /**
@@ -70,7 +69,7 @@ public class TextSticker extends Sticker {
     mContext = context;
     mDrawable = drawable;
     if (drawable == null) {
-      mDrawable = ContextCompat.getDrawable(context, R.drawable.transparent_background);
+      mDrawable = ContextCompat.getDrawable(context, R.drawable.sticker_transparent_background);
     }
     matrix = new Matrix();
     mTextPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);

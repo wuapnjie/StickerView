@@ -16,13 +16,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.xiaopo.flying.sticker.BitmapStickerIcon;
+import com.xiaopo.flying.sticker.DeleteIconEvent;
 import com.xiaopo.flying.sticker.DrawableSticker;
+import com.xiaopo.flying.sticker.FlipHorizontallyEvent;
 import com.xiaopo.flying.sticker.Sticker;
 import com.xiaopo.flying.sticker.StickerView;
 import com.xiaopo.flying.sticker.TextSticker;
+import com.xiaopo.flying.sticker.ZoomIconEvent;
 import com.xiaopo.flying.stickerview.util.FileUtil;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
   private static final String TAG = MainActivity.class.getSimpleName();
@@ -36,14 +43,41 @@ public class MainActivity extends AppCompatActivity {
     stickerView = (StickerView) findViewById(R.id.sticker_view);
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
+    //currently you can config your own icons and icon event
+    //the event you can custom
+    BitmapStickerIcon deleteIcon = new BitmapStickerIcon(ContextCompat.getDrawable(this,
+        com.xiaopo.flying.sticker.R.drawable.sticker_ic_close_white_18dp),
+        BitmapStickerIcon.LEFT_TOP);
+    deleteIcon.setIconEvent(new DeleteIconEvent());
+
+    BitmapStickerIcon zoomIcon = new BitmapStickerIcon(ContextCompat.getDrawable(this,
+        com.xiaopo.flying.sticker.R.drawable.sticker_ic_scale_white_18dp),
+        BitmapStickerIcon.RIGHT_BOTOM);
+    zoomIcon.setIconEvent(new ZoomIconEvent());
+
+    BitmapStickerIcon flipIcon = new BitmapStickerIcon(ContextCompat.getDrawable(this,
+        com.xiaopo.flying.sticker.R.drawable.sticker_ic_flip_white_18dp),
+        BitmapStickerIcon.RIGHT_TOP);
+    flipIcon.setIconEvent(new FlipHorizontallyEvent());
+
+    BitmapStickerIcon heartIcon =
+        new BitmapStickerIcon(ContextCompat.getDrawable(this, R.drawable.ic_favorite_white_24dp),
+            BitmapStickerIcon.LEFT_BOTTOM);
+    heartIcon.setIconEvent(new HelloIconEvent());
+
+    stickerView.setIcons(Arrays.asList(deleteIcon, zoomIcon, flipIcon, heartIcon));
+
+    //default icon layout
+    //stickerView.configDefaultIcons();
+
     stickerView.setBackgroundColor(Color.WHITE);
     stickerView.setLocked(false);
     stickerView.setConstrained(true);
 
     sticker = new TextSticker(this);
 
-    sticker.setDrawable(
-        ContextCompat.getDrawable(getApplicationContext(), R.drawable.transparent_background));
+    sticker.setDrawable(ContextCompat.getDrawable(getApplicationContext(),
+        R.drawable.sticker_transparent_background));
     sticker.setText("Hello, world!");
     sticker.setTextColor(Color.BLACK);
     sticker.setTextAlign(Layout.Alignment.ALIGN_CENTER);

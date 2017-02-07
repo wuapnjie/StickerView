@@ -3,21 +3,32 @@ package com.xiaopo.flying.sticker;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.IntRange;
+import android.view.MotionEvent;
 
 /**
- * Created by snowbean on 16-8-5.
+ * @author wupanjie
  */
-public class BitmapStickerIcon extends DrawableSticker {
+public class BitmapStickerIcon extends DrawableSticker implements StickerIconEvent {
   public static final float DEFAULT_ICON_RADIUS = 30f;
   public static final float DEFAULT_ICON_EXTRA_RADIUS = 10f;
+
+  public static final int LEFT_TOP = 0;
+  public static final int RIGHT_TOP = 1;
+  public static final int LEFT_BOTTOM = 2;
+  public static final int RIGHT_BOTOM = 3;
 
   private float iconRadius = DEFAULT_ICON_RADIUS;
   private float iconExtraRadius = DEFAULT_ICON_EXTRA_RADIUS;
   private float x;
   private float y;
+  private int position = LEFT_TOP;
 
-  public BitmapStickerIcon(Drawable drawable) {
+  private StickerIconEvent iconEvent;
+
+  public BitmapStickerIcon(Drawable drawable, int position) {
     super(drawable);
+    this.position = position;
   }
 
   public void draw(Canvas canvas, Paint paint) {
@@ -55,5 +66,33 @@ public class BitmapStickerIcon extends DrawableSticker {
 
   public void setIconExtraRadius(float iconExtraRadius) {
     this.iconExtraRadius = iconExtraRadius;
+  }
+
+  @Override public void onActionDown(StickerView stickerView, MotionEvent event) {
+    if (iconEvent != null) iconEvent.onActionDown(stickerView, event);
+  }
+
+  @Override public void onActionMove(StickerView stickerView, MotionEvent event) {
+    if (iconEvent != null) iconEvent.onActionMove(stickerView, event);
+  }
+
+  @Override public void onActionUp(StickerView stickerView, MotionEvent event) {
+    if (iconEvent != null) iconEvent.onActionUp(stickerView, event);
+  }
+
+  public StickerIconEvent getIconEvent() {
+    return iconEvent;
+  }
+
+  public void setIconEvent(StickerIconEvent iconEvent) {
+    this.iconEvent = iconEvent;
+  }
+
+  public int getPosition() {
+    return position;
+  }
+
+  public void setPosition(int position) {
+    this.position = position;
   }
 }

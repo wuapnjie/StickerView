@@ -9,21 +9,30 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 
 /**
- * Created by snowbean on 16-8-6.
+ * @author wupanjie
  */
 public abstract class Sticker {
   protected static final String TAG = "Sticker";
 
   protected Matrix matrix;
-  protected boolean isFlipped;
+  protected boolean isFlippedHorizontally;
+  protected boolean isFlippedVertically;
   private float[] matrixValues = new float[9];
 
-  public boolean isFlipped() {
-    return isFlipped;
+  public boolean isFlippedHorizontally() {
+    return isFlippedHorizontally;
   }
 
-  public void setFlipped(boolean flipped) {
-    this.isFlipped = flipped;
+  public void setFlippedHorizontally(boolean flippedHorizontally) {
+    isFlippedHorizontally = flippedHorizontally;
+  }
+
+  public boolean isFlippedVertically() {
+    return isFlippedVertically;
+  }
+
+  public void setFlippedVertically(boolean flippedVertically) {
+    isFlippedVertically = flippedVertically;
   }
 
   public Matrix getMatrix() {
@@ -45,14 +54,26 @@ public abstract class Sticker {
   public abstract Drawable getDrawable();
 
   public float[] getBoundPoints() {
-    if (!isFlipped) {
-      return new float[] {
-          0f, 0f, getWidth(), 0f, 0f, getHeight(), getWidth(), getHeight()
-      };
+    if (!isFlippedHorizontally) {
+      if (!isFlippedVertically) {
+        return new float[] {
+            0f, 0f, getWidth(), 0f, 0f, getHeight(), getWidth(), getHeight()
+        };
+      } else {
+        return new float[] {
+            0f, getHeight(), getWidth(), getHeight(), 0f, 0f, getWidth(), 0f
+        };
+      }
     } else {
-      return new float[] {
-          getWidth(), 0f, 0f, 0f, getWidth(), getHeight(), 0f, getHeight()
-      };
+      if (!isFlippedVertically) {
+        return new float[] {
+            getWidth(), 0f, 0f, 0f, getWidth(), getHeight(), 0f, getHeight()
+        };
+      }else {
+        return new float[] {
+            getWidth(), getHeight(), 0f, getHeight(), getWidth(), 0f, 0f, 0f
+        };
+      }
     }
   }
 

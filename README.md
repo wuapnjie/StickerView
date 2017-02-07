@@ -13,7 +13,7 @@ A view which can add sticker and zoom,drag,flip,delete it
 In your **build.gradle**
 
 ```gradle
-compile 'com.flying.xiaopo:sticker:1.3.0'
+compile 'com.flying.xiaopo:sticker:1.4.0'
 ```
 
 **Tips**:StickerView extends FrameLayout
@@ -44,12 +44,15 @@ stickerView.removeAllStickers()
 stcikerView.setLocked(true)
 ```
 
-Also you can custom the icon
+Also you can custom the icon and icon event and position
 
 ```java
-public void setDeleteIcon(deleteIcon)
-public void setZoomIcon(zoomIcon)
-public void setFlipIcon(flipIcon)
+ BitmapStickerIcon heartIcon =
+        new BitmapStickerIcon(ContextCompat.getDrawable(this, R.drawable.ic_favorite_white_24dp),
+            BitmapStickerIcon.LEFT_BOTTOM);
+heartIcon.setIconEvent(new HelloIconEvent());
+
+stickerView.setIcons(Arrays.asList(deleteIcon, zoomIcon, flipIcon, heartIcon));
 ```
 
 ## Update
@@ -63,6 +66,7 @@ public void setFlipIcon(flipIcon)
 * **2016/12/15** Add remove methods.
 * **2016/12/16** Add Double Tap Callback
 * **2016/12/17** Add Constrain Sticker's move area
+* **2017/02/07** Custom your icon and icon event
 
 ## Todo
 - [x] Constrain the sticker's moving area
@@ -85,3 +89,5 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+

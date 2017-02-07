@@ -16,7 +16,7 @@ import java.io.IOException;
 import static java.lang.Math.round;
 
 /**
- * Created by snowbean on 16-12-2.
+ * @author wupanjie
  */
 class StickerUtils {
   private static final String TAG = "StickerView";

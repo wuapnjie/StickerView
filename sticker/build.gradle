@@ -26,12 +26,12 @@ dependencies {
     compile "com.android.support:appcompat-v7:$rootProject.ext.supportLibraryVersion"
 }
 
-
+//
 //apply plugin: 'com.android.library'
 //apply plugin: 'com.github.dcendents.android-maven'
 //apply plugin: 'com.jfrog.bintray'
 //
-//version = "1.3.0" // #修改# // 这里是aar的版本号
+//version = "1.4.0" // #修改# // 这里是aar的版本号
 //
 //android {
 //  compileSdkVersion 25
@@ -140,4 +140,4 @@ dependencies {
 //    publish = true
 //  }
 //}
-//
+
