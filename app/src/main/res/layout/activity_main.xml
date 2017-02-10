@@ -91,6 +91,14 @@
           android:text="Lock"
           />
 
+      <Button
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:background="?attr/selectableItemBackground"
+          android:onClick="testAdd"
+          android:text="Add"
+          />
+
     </LinearLayout>
   </HorizontalScrollView>
 </LinearLayout>

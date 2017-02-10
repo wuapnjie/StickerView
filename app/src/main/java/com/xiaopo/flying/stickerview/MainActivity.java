@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
       @Override public void onStickerClicked(Sticker sticker) {
         //stickerView.removeAllSticker();
         if (sticker instanceof TextSticker) {
+          ((TextSticker) sticker).setTextColor(Color.RED);
           stickerView.replace(sticker);
           stickerView.invalidate();
         }
@@ -202,5 +203,15 @@ public class MainActivity extends AppCompatActivity {
   public void reset(View view) {
     stickerView.removeAllStickers();
     loadSticker();
+  }
+
+  public void testAdd(View view) {
+    final TextSticker sticker = new TextSticker(this);
+    sticker.setText("Hello, world!");
+    sticker.setTextColor(Color.BLUE);
+    sticker.setTextAlign(Layout.Alignment.ALIGN_CENTER);
+    sticker.resizeText();
+
+    stickerView.addSticker(sticker);
   }
 }
