@@ -263,7 +263,8 @@ public class StickerView extends FrameLayout {
                 }
 
                 if (bringToFrontCurrentSticker) {
-                    bringToFrontCurrentSticker();
+                    stickers.remove(handlingSticker);
+                    stickers.add(handlingSticker);
                 }
 
                 invalidate();
@@ -720,20 +721,6 @@ public class StickerView extends FrameLayout {
     public void setIcons(List<BitmapStickerIcon> icons) {
         this.icons = icons;
         invalidate();
-    }
-
-    public boolean bringToFrontCurrentSticker() {
-        if (handlingSticker != null) {
-
-            int index = stickers.indexOf(handlingSticker);
-            stickers.remove(index);
-            stickers.add(handlingSticker);
-
-            invalidate();
-            return true;
-        } else {
-            return false;
-        }
     }
 
     public interface OnStickerOperationListener {
