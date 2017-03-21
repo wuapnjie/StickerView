@@ -3,5 +3,6 @@
     <declare-styleable name="StickerView">
         <attr name="showIcons" format="boolean" />
         <attr name="showBorder" format="boolean" />
+        <attr name="bringToFrontCurrentSticker" format="boolean" />
     </declare-styleable>
 </resources>

@@ -30,6 +30,7 @@ public class StickerView extends FrameLayout {
 
     private final boolean showIcons;
     private final boolean showBorder;
+    private final boolean bringToFrontCurrentSticker;
 
     private enum ActionMode {
         NONE,   //nothing
@@ -94,6 +95,7 @@ public class StickerView extends FrameLayout {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.StickerView);
         showIcons = a.getBoolean(R.styleable.StickerView_showIcons, false);
         showBorder = a.getBoolean(R.styleable.StickerView_showBorder, false);
+        bringToFrontCurrentSticker = a.getBoolean(R.styleable.StickerView_bringToFrontCurrentSticker, false);
 //    if (s != null) {
 //      this.setAlternativeKeyLabel(s.toString());
 //    }
@@ -258,6 +260,10 @@ public class StickerView extends FrameLayout {
 
                 if (handlingSticker != null) {
                     downMatrix.set(handlingSticker.getMatrix());
+                }
+
+                if (bringToFrontCurrentSticker) {
+                    bringToFrontCurrentSticker();
                 }
 
                 invalidate();
@@ -714,6 +720,20 @@ public class StickerView extends FrameLayout {
     public void setIcons(List<BitmapStickerIcon> icons) {
         this.icons = icons;
         invalidate();
+    }
+
+    public boolean bringToFrontCurrentSticker() {
+        if (handlingSticker != null) {
+
+            int index = stickers.indexOf(handlingSticker);
+            stickers.remove(index);
+            stickers.add(handlingSticker);
+
+            invalidate();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public interface OnStickerOperationListener {
