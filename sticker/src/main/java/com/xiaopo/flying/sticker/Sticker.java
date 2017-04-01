@@ -53,6 +53,8 @@ public abstract class Sticker {
 
   public abstract Drawable getDrawable();
 
+  public abstract void setAlpha(int alpha);
+
   public float[] getBoundPoints() {
     if (!isFlippedHorizontally) {
       if (!isFlippedVertically) {

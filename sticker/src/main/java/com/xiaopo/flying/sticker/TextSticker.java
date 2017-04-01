@@ -120,6 +120,11 @@ public class TextSticker extends Sticker {
     }
   }
 
+  @Override
+  public void setAlpha(int alpha) {
+    mTextPaint.setAlpha(alpha);
+  }
+
   @Override public Drawable getDrawable() {
     return mDrawable;
   }
