@@ -35,6 +35,11 @@ public class DrawableSticker extends Sticker {
     canvas.restore();
   }
 
+  @Override
+  public void setAlpha(int alpha) {
+    drawable.setAlpha(alpha);
+  }
+
   @Override public int getWidth() {
     return drawable.getIntrinsicWidth();
   }
