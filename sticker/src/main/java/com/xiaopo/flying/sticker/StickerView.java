@@ -661,12 +661,12 @@ public class StickerView extends FrameLayout {
     float offsetY = (getHeight() - sticker.getHeight()) / 2;
     sticker.getMatrix().postTranslate(offsetX, offsetY);
 
-    float scaleFactor;
-    if (getWidth() < getHeight()) {
-      scaleFactor = (float) getWidth() / sticker.getDrawable().getIntrinsicWidth();
-    } else {
-      scaleFactor = (float) getHeight() / sticker.getDrawable().getIntrinsicHeight();
-    }
+    float scaleFactor, widthScaleFactor, heightScaleFactor;
+
+    widthScaleFactor = (float) getWidth() / sticker.getDrawable().getIntrinsicWidth();
+    heightScaleFactor = (float) getHeight() / sticker.getDrawable().getIntrinsicHeight();
+    scaleFactor = widthScaleFactor > heightScaleFactor ? heightScaleFactor : widthScaleFactor;
+
     sticker.getMatrix()
         .postScale(scaleFactor / 2, scaleFactor / 2, getWidth() / 2, getHeight() / 2);
 
