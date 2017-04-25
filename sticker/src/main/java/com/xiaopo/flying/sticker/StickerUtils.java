@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.File;
@@ -21,10 +22,9 @@ import static java.lang.Math.round;
 class StickerUtils {
   private static final String TAG = "StickerView";
 
-  public static String saveImageToGallery(File file, Bitmap bmp) {
+  public static File saveImageToGallery(@NonNull File file, @NonNull Bitmap bmp) {
     if (bmp == null) {
-      Log.e(TAG, "saveImageToGallery: the bitmap is null");
-      return "";
+      throw new IllegalArgumentException("bmp should not be null");
     }
     try {
       FileOutputStream fos = new FileOutputStream(file);
@@ -36,29 +36,33 @@ class StickerUtils {
     }
 
     Log.e(TAG, "saveImageToGallery: the path of bmp is " + file.getAbsolutePath());
-    return file.getAbsolutePath();
+    return file;
   }
 
-  // 把文件插入到系统图库
-  public static void notifySystemGallery(Context context, File file) {
+  public static void notifySystemGallery(@NonNull Context context, @NonNull File file) {
     if (file == null || !file.exists()) {
-      Log.e(TAG, "notifySystemGallery: the file do not exist.");
-      return;
+      throw new IllegalArgumentException("bmp should not be null");
     }
 
     try {
       MediaStore.Images.Media.insertImage(context.getContentResolver(), file.getAbsolutePath(),
-          file.getName(), null);
+              file.getName(), null);
     } catch (FileNotFoundException e) {
-      e.printStackTrace();
+      throw new IllegalStateException("File couldn't be found");
     }
-    // 最后通知图库更新
     context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
   }
 
-  public static RectF trapToRect(float[] array) {
-    RectF r = new RectF(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY,
-        Float.NEGATIVE_INFINITY);
+  @NonNull
+  public static RectF trapToRect(@NonNull float[] array) {
+    RectF r = new RectF();
+    trapToRect(r, array);
+    return r;
+  }
+
+  public static void trapToRect(@NonNull RectF r, @NonNull float[] array) {
+    r.set(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY,
+            Float.NEGATIVE_INFINITY);
     for (int i = 1; i < array.length; i += 2) {
       float x = round(array[i - 1] * 10) / 10.f;
       float y = round(array[i] * 10) / 10.f;
@@ -68,6 +72,5 @@ class StickerUtils {
       r.bottom = (y > r.bottom) ? y : r.bottom;
     }
     r.sort();
-    return r;
   }
 }

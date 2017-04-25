@@ -2,11 +2,8 @@ package com.xiaopo.flying.sticker;
 
 import android.view.MotionEvent;
 
-/**
- * @author wupanjie
- */
+public abstract class AbstractFlipEvent implements StickerIconEvent {
 
-public class DeleteIconEvent implements StickerIconEvent {
   @Override
   public void onActionDown(StickerView stickerView, MotionEvent event) {
 
@@ -19,6 +16,9 @@ public class DeleteIconEvent implements StickerIconEvent {
 
   @Override
   public void onActionUp(StickerView stickerView, MotionEvent event) {
-    stickerView.removeCurrentSticker();
+    stickerView.flipCurrentSticker(getFlipDirection());
   }
+
+  @StickerView.Flip
+  protected abstract int getFlipDirection();
 }
