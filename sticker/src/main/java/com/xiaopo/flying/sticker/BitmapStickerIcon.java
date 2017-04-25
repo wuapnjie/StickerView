@@ -5,7 +5,6 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.IntDef;
 import android.view.MotionEvent;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 

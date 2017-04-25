@@ -1,7 +1,5 @@
 package com.xiaopo.flying.sticker;
 
-import android.view.MotionEvent;
-
 /**
  * @author wupanjie
  */

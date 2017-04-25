@@ -24,7 +24,6 @@ import android.text.TextPaint;
  * See https://adilatwork.blogspot.com/2014/08/android-textview-which-resizes-its-text.html
  * Notice: It's not efficient to add long text due to too much of
  * StaticLayout object allocation.
- * <p>
  * Created by liutao on 30/11/2016.
  */
 

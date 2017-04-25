@@ -21,7 +21,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
-
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -31,8 +30,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Sticker view
- * Created by snowbean on 16-8-2.
+ * Sticker View
+ * @author wupanjie
  */
 public class StickerView extends FrameLayout {
 
@@ -80,7 +79,6 @@ public class StickerView extends FrameLayout {
   private final float[] tmp = new float[2];
   private PointF midPoint = new PointF();
   // endregion
-
   private final int touchSlop;
 
   private BitmapStickerIcon currentIcon;
@@ -157,9 +155,6 @@ public class StickerView extends FrameLayout {
   /**
    * Swaps sticker at layer [[oldPos]] with the one at layer [[newPos]].
    * Does nothing if either of the specified layers doesn't exist.
-   *
-   * @param oldPos
-   * @param newPos
    */
   public void swapLayers(int oldPos, int newPos) {
     if (stickers.size() >= oldPos && stickers.size() >= newPos) {
@@ -171,9 +166,6 @@ public class StickerView extends FrameLayout {
   /**
    * Sends sticker from layer [[oldPos]] to layer [[newPos]].
    * Does nothing if either of the specified layers doesn't exist.
-   *
-   * @param oldPos
-   * @param newPos
    */
   public void sendToLayer(int oldPos, int newPos) {
     if (stickers.size() >= oldPos && stickers.size() >= newPos) {
