@@ -19,6 +19,7 @@ import android.widget.FrameLayout;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -134,6 +135,36 @@ public class StickerView extends FrameLayout {
     icons.add(deleteIcon);
     icons.add(zoomIcon);
     icons.add(flipIcon);
+  }
+
+  /**
+   * Swaps sticker at layer [[oldPos]] with the one at layer [[newPos]].
+   * Does nothing if either of the specified layers doesn't exist.
+   *
+   * @param oldPos
+   * @param newPos
+   */
+  public void swapLayers(int oldPos, int newPos) {
+    if (stickers.size() >= oldPos && stickers.size() >= newPos) {
+      Collections.swap(stickers, oldPos, newPos);
+      invalidate();
+    }
+  }
+
+  /**
+   * Sends sticker from layer [[oldPos]] to layer [[newPos]].
+   * Does nothing if either of the specified layers doesn't exist.
+   *
+   * @param oldPos
+   * @param newPos
+   */
+  public void sendToLayer(int oldPos, int newPos) {
+    if (stickers.size() >= oldPos && stickers.size() >= newPos) {
+      Sticker s = stickers.get(oldPos);
+      stickers.remove(oldPos);
+      stickers.add(newPos, s);
+      invalidate();
+    }
   }
 
   @Override protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
