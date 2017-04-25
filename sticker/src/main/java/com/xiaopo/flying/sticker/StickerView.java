@@ -27,6 +27,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -151,6 +152,36 @@ public class StickerView extends FrameLayout {
     icons.add(deleteIcon);
     icons.add(zoomIcon);
     icons.add(flipIcon);
+  }
+
+  /**
+   * Swaps sticker at layer [[oldPos]] with the one at layer [[newPos]].
+   * Does nothing if either of the specified layers doesn't exist.
+   *
+   * @param oldPos
+   * @param newPos
+   */
+  public void swapLayers(int oldPos, int newPos) {
+    if (stickers.size() >= oldPos && stickers.size() >= newPos) {
+      Collections.swap(stickers, oldPos, newPos);
+      invalidate();
+    }
+  }
+
+  /**
+   * Sends sticker from layer [[oldPos]] to layer [[newPos]].
+   * Does nothing if either of the specified layers doesn't exist.
+   *
+   * @param oldPos
+   * @param newPos
+   */
+  public void sendToLayer(int oldPos, int newPos) {
+    if (stickers.size() >= oldPos && stickers.size() >= newPos) {
+      Sticker s = stickers.get(oldPos);
+      stickers.remove(oldPos);
+      stickers.add(newPos, s);
+      invalidate();
+    }
   }
 
   @Override protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -694,15 +725,15 @@ public class StickerView extends FrameLayout {
   protected void addStickerImmediately(@NonNull Sticker sticker, @Sticker.Position int position) {
     setStickerPosition(sticker, position);
 
-    float width = getWidth();
-    float height = getHeight();
-    float scaleFactor;
-    if (width < height) {
-      scaleFactor = width / sticker.getDrawable().getIntrinsicWidth();
-    } else {
-      scaleFactor = height / sticker.getDrawable().getIntrinsicHeight();
-    }
-    sticker.getMatrix().postScale(scaleFactor / 2f, scaleFactor / 2f, width / 2f, height / 2f);
+
+    float scaleFactor, widthScaleFactor, heightScaleFactor;
+
+    widthScaleFactor = (float) getWidth() / sticker.getDrawable().getIntrinsicWidth();
+    heightScaleFactor = (float) getHeight() / sticker.getDrawable().getIntrinsicHeight();
+    scaleFactor = widthScaleFactor > heightScaleFactor ? heightScaleFactor : widthScaleFactor;
+
+    sticker.getMatrix()
+        .postScale(scaleFactor / 2, scaleFactor / 2, getWidth() / 2, getHeight() / 2);
 
     handlingSticker = sticker;
     stickers.add(sticker);
