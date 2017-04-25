@@ -6,11 +6,15 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
+import android.support.annotation.Dimension;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
-import android.util.TypedValue;
 
 /**
  * Customize your sticker with text and image background.
@@ -31,213 +35,237 @@ public class TextSticker extends Sticker {
    */
   private static final String mEllipsis = "\u2026";
 
+  private final Context context;
+  private final Rect realBounds;
+  private final Rect textRect;
+  private final TextPaint textPaint;
+  private Drawable drawable;
+  private StaticLayout staticLayout;
+  private Layout.Alignment alignment;
+  private String text;
+
   /**
    * Upper bounds for text size.
    * This acts as a starting point for resizing.
    */
-  private float mMaxTextSizePixels;
+  private float maxTextSizePixels;
 
   /**
    * Lower bounds for text size.
    */
-  private float mMinTextSizePixels;
+  private float minTextSizePixels;
 
   /**
    * Line spacing multiplier.
    */
-  private float mLineSpacingMultiplier = 1.0f;
+  private float lineSpacingMultiplier = 1.0f;
 
   /**
    * Additional line spacing.
    */
-  private float mLineSpacingExtra = 0.0f;
+  private float lineSpacingExtra = 0.0f;
 
-  private Context mContext;
-  private Drawable mDrawable;
-  private Rect mRealBounds;
-  private Rect mTextRect;
-  private StaticLayout mStaticLayout;
-  private TextPaint mTextPaint;
-  private Layout.Alignment mAlignment;
-  private String mText;
-
-  public TextSticker(Context context) {
+  public TextSticker(@NonNull Context context) {
     this(context, null);
   }
 
-  public TextSticker(Context context, Drawable drawable) {
-    mContext = context;
-    mDrawable = drawable;
+  public TextSticker(@NonNull Context context, @Nullable Drawable drawable) {
+    this.context = context;
+    this.drawable = drawable;
     if (drawable == null) {
-      mDrawable = ContextCompat.getDrawable(context, R.drawable.sticker_transparent_background);
+      this.drawable = ContextCompat.getDrawable(context, R.drawable.sticker_transparent_background);
     }
-    matrix = new Matrix();
-    mTextPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
-    mRealBounds = new Rect(0, 0, getWidth(), getHeight());
-    mTextRect = new Rect(0, 0, getWidth(), getHeight());
-    mMinTextSizePixels = convertSpToPx(6);
-    mMaxTextSizePixels = convertSpToPx(32);
-    mAlignment = Layout.Alignment.ALIGN_CENTER;
-    mTextPaint.setTextSize(mMaxTextSizePixels);
-  }
-
-  @Override public void draw(Canvas canvas) {
-    canvas.save();
-    canvas.concat(matrix);
-    if (mDrawable != null) {
-      mDrawable.setBounds(mRealBounds);
-      mDrawable.draw(canvas);
-    }
-    canvas.restore();
-
-    canvas.save();
-    canvas.concat(matrix);
-    if (mTextRect.width() == getWidth()) {
-      int dy = getHeight() / 2 - mStaticLayout.getHeight() / 2;
-      // center vertical
-      canvas.translate(0, dy);
-    } else {
-      int dx = mTextRect.left;
-      int dy = mTextRect.top + mTextRect.height() / 2 - mStaticLayout.getHeight() / 2;
-      canvas.translate(dx, dy);
-    }
-    mStaticLayout.draw(canvas);
-    canvas.restore();
-  }
-
-  @Override public int getWidth() {
-    return mDrawable.getIntrinsicWidth();
-  }
-
-  @Override public int getHeight() {
-    return mDrawable.getIntrinsicHeight();
-  }
-
-  @Override public void release() {
-    super.release();
-    if (mDrawable != null) {
-      mDrawable = null;
-    }
+    textPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+    realBounds = new Rect(0, 0, getWidth(), getHeight());
+    textRect = new Rect(0, 0, getWidth(), getHeight());
+    minTextSizePixels = convertSpToPx(6);
+    maxTextSizePixels = convertSpToPx(32);
+    alignment = Layout.Alignment.ALIGN_CENTER;
+    textPaint.setTextSize(maxTextSizePixels);
   }
 
   @Override
-  public void setAlpha(int alpha) {
-    mTextPaint.setAlpha(alpha);
-  }
+  public void draw(@NonNull Canvas canvas) {
+    Matrix matrix = getMatrix();
+    canvas.save();
+    canvas.concat(matrix);
+    if (drawable != null) {
+      drawable.setBounds(realBounds);
+      drawable.draw(canvas);
+    }
+    canvas.restore();
 
-  @Override public Drawable getDrawable() {
-    return mDrawable;
-  }
-
-  @Override public void setDrawable(Drawable drawable) {
-    mDrawable = drawable;
-    mRealBounds.set(0, 0, getWidth(), getHeight());
-    mTextRect.set(0, 0, getWidth(), getHeight());
-  }
-
-  public void setDrawable(Drawable drawable, Rect region) {
-    mDrawable = drawable;
-    mRealBounds.set(0, 0, getWidth(), getHeight());
-    if (region == null) {
-      mTextRect.set(0, 0, getWidth(), getHeight());
+    canvas.save();
+    canvas.concat(matrix);
+    if (textRect.width() == getWidth()) {
+      int dy = getHeight() / 2 - staticLayout.getHeight() / 2;
+      // center vertical
+      canvas.translate(0, dy);
     } else {
-      mTextRect.set(region.left, region.top, region.right, region.bottom);
+      int dx = textRect.left;
+      int dy = textRect.top + textRect.height() / 2 - staticLayout.getHeight() / 2;
+      canvas.translate(dx, dy);
+    }
+    staticLayout.draw(canvas);
+    canvas.restore();
+  }
+
+  @Override
+  public int getWidth() {
+    return drawable.getIntrinsicWidth();
+  }
+
+  @Override
+  public int getHeight() {
+    return drawable.getIntrinsicHeight();
+  }
+
+  @Override
+  public void release() {
+    super.release();
+    if (drawable != null) {
+      drawable = null;
     }
   }
 
-  public void setTypeface(Typeface typeface) {
-    mTextPaint.setTypeface(typeface);
+  @NonNull
+  @Override
+  public TextSticker setAlpha(@IntRange(from=0,to=255) int alpha) {
+    textPaint.setAlpha(alpha);
+    return this;
   }
 
-  public void setTextColor(int color) {
-    mTextPaint.setColor(color);
+  @NonNull
+  @Override
+  public Drawable getDrawable() {
+    return drawable;
   }
 
-  public void setTextAlign(Layout.Alignment alignment) {
-    mAlignment = alignment;
+  @Override
+  public TextSticker setDrawable(@NonNull Drawable drawable) {
+    this.drawable = drawable;
+    realBounds.set(0, 0, getWidth(), getHeight());
+    textRect.set(0, 0, getWidth(), getHeight());
+    return this;
   }
 
-  public void setMaxTextSize(float size) {
-    setMaxTextSize(TypedValue.COMPLEX_UNIT_SP, size);
+  @NonNull
+  public TextSticker setDrawable(@NonNull Drawable drawable, @Nullable Rect region) {
+    this.drawable = drawable;
+    realBounds.set(0, 0, getWidth(), getHeight());
+    if (region == null) {
+      textRect.set(0, 0, getWidth(), getHeight());
+    } else {
+      textRect.set(region.left, region.top, region.right, region.bottom);
+    }
+    return this;
   }
 
-  public void setMaxTextSize(int unit, float size) {
-    mTextPaint.setTextSize(convertSpToPx(size));
-    mMaxTextSizePixels = mTextPaint.getTextSize();
+  @NonNull
+  public TextSticker setTypeface(@Nullable Typeface typeface) {
+    textPaint.setTypeface(typeface);
+    return this;
+  }
+
+  @NonNull
+  public TextSticker setTextColor(@ColorInt int color) {
+    textPaint.setColor(color);
+    return this;
+  }
+
+  @NonNull
+  public TextSticker setTextAlign(@NonNull Layout.Alignment alignment) {
+    this.alignment = alignment;
+    return this;
+  }
+
+  @NonNull
+  public TextSticker setMaxTextSize(@Dimension(unit = Dimension.SP) float size) {
+    textPaint.setTextSize(convertSpToPx(size));
+    maxTextSizePixels = textPaint.getTextSize();
+    return this;
   }
 
   /**
    * Sets the lower text size limit
    *
    * @param minTextSizeScaledPixels the minimum size to use for text in this view,
-   * in scaled pixels.
+   *                                in scaled pixels.
    */
-  public void setMinTextSize(float minTextSizeScaledPixels) {
-    mMinTextSizePixels = convertSpToPx(minTextSizeScaledPixels);
+  @NonNull
+  public TextSticker setMinTextSize(float minTextSizeScaledPixels) {
+    minTextSizePixels = convertSpToPx(minTextSizeScaledPixels);
+    return this;
   }
 
-  public void setLineSpacing(float add, float multiplier) {
-    mLineSpacingMultiplier = multiplier;
-    mLineSpacingExtra = add;
+  @NonNull
+  public TextSticker setLineSpacing(float add, float multiplier) {
+    lineSpacingMultiplier = multiplier;
+    lineSpacingExtra = add;
+    return this;
   }
 
-  public void setText(String text) {
-    mText = text;
+  @NonNull
+  public TextSticker setText(@Nullable String text) {
+    this.text = text;
+    return this;
   }
 
+  @Nullable
   public String getText() {
-    return mText;
+    return text;
   }
 
   /**
    * Resize this view's text size with respect to its width and height
    * (minus padding). You should always call this method after the initialization.
    */
-  public void resizeText() {
-    final int availableHeightPixels = mTextRect.height();
+  @NonNull
+  public TextSticker resizeText() {
+    final int availableHeightPixels = textRect.height();
 
-    final int availableWidthPixels = mTextRect.width();
+    final int availableWidthPixels = textRect.width();
 
     final CharSequence text = getText();
 
     // Safety check
     // (Do not resize if the view does not have dimensions or if there is no text)
     if (text == null
-        || text.length() <= 0
-        || availableHeightPixels <= 0
-        || availableWidthPixels <= 0
-        || mMaxTextSizePixels <= 0) {
-      return;
+            || text.length() <= 0
+            || availableHeightPixels <= 0
+            || availableWidthPixels <= 0
+            || maxTextSizePixels <= 0) {
+      return this;
     }
 
-    float targetTextSizePixels = mMaxTextSizePixels;
+    float targetTextSizePixels = maxTextSizePixels;
     int targetTextHeightPixels =
-        getTextHeightPixels(text, availableWidthPixels, targetTextSizePixels);
+            getTextHeightPixels(text, availableWidthPixels, targetTextSizePixels);
 
     // Until we either fit within our TextView
     // or we have reached our minimum text size,
     // incrementally try smaller sizes
     while (targetTextHeightPixels > availableHeightPixels
-        && targetTextSizePixels > mMinTextSizePixels) {
-      targetTextSizePixels = Math.max(targetTextSizePixels - 2, mMinTextSizePixels);
+            && targetTextSizePixels > minTextSizePixels) {
+      targetTextSizePixels = Math.max(targetTextSizePixels - 2, minTextSizePixels);
 
       targetTextHeightPixels =
-          getTextHeightPixels(text, availableWidthPixels, targetTextSizePixels);
+              getTextHeightPixels(text, availableWidthPixels, targetTextSizePixels);
     }
 
     // If we have reached our minimum text size and the text still doesn't fit,
     // append an ellipsis
     // (NOTE: Auto-ellipsize doesn't work hence why we have to do it here)
-    if (targetTextSizePixels == mMinTextSizePixels
-        && targetTextHeightPixels > availableHeightPixels) {
+    if (targetTextSizePixels == minTextSizePixels
+            && targetTextHeightPixels > availableHeightPixels) {
       // Make a copy of the original TextPaint object for measuring
-      TextPaint textPaintCopy = new TextPaint(mTextPaint);
+      TextPaint textPaintCopy = new TextPaint(textPaint);
       textPaintCopy.setTextSize(targetTextSizePixels);
 
       // Measure using a StaticLayout instance
       StaticLayout staticLayout =
-          new StaticLayout(text, textPaintCopy, availableWidthPixels, Layout.Alignment.ALIGN_NORMAL,
-              mLineSpacingMultiplier, mLineSpacingExtra, false);
+              new StaticLayout(text, textPaintCopy, availableWidthPixels, Layout.Alignment.ALIGN_NORMAL,
+                      lineSpacingMultiplier, lineSpacingExtra, false);
 
       // Check that we have a least one line of rendered text
       if (staticLayout.getLineCount() > 0) {
@@ -255,24 +283,25 @@ public class TextSticker extends Sticker {
           while (availableWidthPixels < lineWidthPixels + ellipseWidth) {
             endOffset--;
             lineWidthPixels =
-                textPaintCopy.measureText(text.subSequence(startOffset, endOffset + 1).toString());
+                    textPaintCopy.measureText(text.subSequence(startOffset, endOffset + 1).toString());
           }
 
           setText(text.subSequence(0, endOffset) + mEllipsis);
         }
       }
     }
-    mTextPaint.setTextSize(targetTextSizePixels);
-    mStaticLayout =
-        new StaticLayout(mText, mTextPaint, mTextRect.width(), mAlignment, mLineSpacingMultiplier,
-            mLineSpacingExtra, true);
+    textPaint.setTextSize(targetTextSizePixels);
+    staticLayout =
+            new StaticLayout(this.text, textPaint, textRect.width(), alignment, lineSpacingMultiplier,
+                    lineSpacingExtra, true);
+    return this;
   }
 
   /**
    * @return lower text size limit, in pixels.
    */
   public float getMinTextSizePixels() {
-    return mMinTextSizePixels;
+    return minTextSizePixels;
   }
 
   /**
@@ -283,15 +312,15 @@ public class TextSticker extends Sticker {
    * with the specified width
    * and when the text has the specified size.
    */
-  private int getTextHeightPixels(CharSequence source, int availableWidthPixels,
-      float textSizePixels) {
-    mTextPaint.setTextSize(textSizePixels);
+  protected int getTextHeightPixels(@NonNull CharSequence source, int availableWidthPixels,
+                                  float textSizePixels) {
+    textPaint.setTextSize(textSizePixels);
     // It's not efficient to create a StaticLayout instance
     // every time when measuring, we can use StaticLayout.Builder
     // since api 23.
     StaticLayout staticLayout =
-        new StaticLayout(source, mTextPaint, availableWidthPixels, Layout.Alignment.ALIGN_NORMAL,
-            mLineSpacingMultiplier, mLineSpacingExtra, true);
+            new StaticLayout(source, textPaint, availableWidthPixels, Layout.Alignment.ALIGN_NORMAL,
+                    lineSpacingMultiplier, lineSpacingExtra, true);
     return staticLayout.getHeight();
   }
 
@@ -299,6 +328,6 @@ public class TextSticker extends Sticker {
    * @return the number of pixels which scaledPixels corresponds to on the device.
    */
   private float convertSpToPx(float scaledPixels) {
-    return scaledPixels * mContext.getResources().getDisplayMetrics().scaledDensity;
+    return scaledPixels * context.getResources().getDisplayMetrics().scaledDensity;
   }
 }
