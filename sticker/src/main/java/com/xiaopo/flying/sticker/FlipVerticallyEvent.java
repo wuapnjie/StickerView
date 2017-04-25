@@ -8,9 +8,7 @@ import android.view.MotionEvent;
 
 public class FlipVerticallyEvent extends AbstractFlipEvent {
 
-  @Override
-  @StickerView.Flip
-  protected int getFlipDirection() {
+  @Override @StickerView.Flip protected int getFlipDirection() {
     return StickerView.FLIP_VERTICALLY;
   }
 }

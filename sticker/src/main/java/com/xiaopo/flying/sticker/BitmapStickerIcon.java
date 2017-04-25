@@ -16,11 +16,11 @@ public class BitmapStickerIcon extends DrawableSticker implements StickerIconEve
   public static final float DEFAULT_ICON_RADIUS = 30f;
   public static final float DEFAULT_ICON_EXTRA_RADIUS = 10f;
 
-  @IntDef({LEFT_TOP, RIGHT_TOP, LEFT_BOTTOM, RIGHT_BOTOM})
-  @Retention(RetentionPolicy.SOURCE)
+  @IntDef({ LEFT_TOP, RIGHT_TOP, LEFT_BOTTOM, RIGHT_BOTOM }) @Retention(RetentionPolicy.SOURCE)
   public @interface Gravity {
 
   }
+
   public static final int LEFT_TOP = 0;
   public static final int RIGHT_TOP = 1;
   public static final int LEFT_BOTTOM = 2;
@@ -30,8 +30,7 @@ public class BitmapStickerIcon extends DrawableSticker implements StickerIconEve
   private float iconExtraRadius = DEFAULT_ICON_EXTRA_RADIUS;
   private float x;
   private float y;
-  @Gravity
-  private int position = LEFT_TOP;
+  @Gravity private int position = LEFT_TOP;
 
   private StickerIconEvent iconEvent;
 
@@ -77,22 +76,19 @@ public class BitmapStickerIcon extends DrawableSticker implements StickerIconEve
     this.iconExtraRadius = iconExtraRadius;
   }
 
-  @Override
-  public void onActionDown(StickerView stickerView, MotionEvent event) {
+  @Override public void onActionDown(StickerView stickerView, MotionEvent event) {
     if (iconEvent != null) {
       iconEvent.onActionDown(stickerView, event);
     }
   }
 
-  @Override
-  public void onActionMove(StickerView stickerView, MotionEvent event) {
+  @Override public void onActionMove(StickerView stickerView, MotionEvent event) {
     if (iconEvent != null) {
       iconEvent.onActionMove(stickerView, event);
     }
   }
 
-  @Override
-  public void onActionUp(StickerView stickerView, MotionEvent event) {
+  @Override public void onActionUp(StickerView stickerView, MotionEvent event) {
     if (iconEvent != null) {
       iconEvent.onActionUp(stickerView, event);
     }
@@ -106,8 +102,7 @@ public class BitmapStickerIcon extends DrawableSticker implements StickerIconEve
     this.iconEvent = iconEvent;
   }
 
-  @Gravity
-  public int getPosition() {
+  @Gravity public int getPosition() {
     return position;
   }
 
