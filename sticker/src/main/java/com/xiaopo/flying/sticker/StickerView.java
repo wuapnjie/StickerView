@@ -35,8 +35,8 @@ import java.util.List;
  */
 public class StickerView extends FrameLayout {
 
-  private final boolean showIcons;
-  private final boolean showBorder;
+  private boolean showIcons;
+  private boolean showBorder;
   private final boolean bringToFrontCurrentSticker;
 
   @IntDef({
@@ -78,7 +78,7 @@ public class StickerView extends FrameLayout {
   private final PointF currentCenterPoint = new PointF();
   private final float[] tmp = new float[2];
   private PointF midPoint = new PointF();
-  // endregion
+  // end region
   private final int touchSlop;
 
   private BitmapStickerIcon currentIcon;
@@ -115,8 +115,8 @@ public class StickerView extends FrameLayout {
     TypedArray a = null;
     try {
       a = context.obtainStyledAttributes(attrs, R.styleable.StickerView);
-      showIcons = a.getBoolean(R.styleable.StickerView_showIcons, false);
-      showBorder = a.getBoolean(R.styleable.StickerView_showBorder, false);
+      showIcons = a.getBoolean(R.styleable.StickerView_showIcons, true);
+      showBorder = a.getBoolean(R.styleable.StickerView_showBorder, true);
       bringToFrontCurrentSticker =
           a.getBoolean(R.styleable.StickerView_bringToFrontCurrentSticker, false);
 
@@ -150,6 +150,16 @@ public class StickerView extends FrameLayout {
     icons.add(deleteIcon);
     icons.add(zoomIcon);
     icons.add(flipIcon);
+  }
+
+  public void setShowBorder(boolean showBorder) {
+    this.showBorder = showBorder;
+    invalidate();
+  }
+
+  public void setShowIcons(boolean showIcons) {
+    this.showIcons = showIcons;
+    invalidate();
   }
 
   /**
@@ -864,5 +874,35 @@ public class StickerView extends FrameLayout {
     void onStickerFlipped(@NonNull Sticker sticker);
 
     void onStickerDoubleTapped(@NonNull Sticker sticker);
+  }
+
+  public abstract class SimpleOnStickerOperationListener implements OnStickerOperationListener {
+    @Override public void onStickerAdded(@NonNull Sticker sticker) {
+
+    }
+
+    @Override public void onStickerClicked(@NonNull Sticker sticker) {
+
+    }
+
+    @Override public void onStickerDeleted(@NonNull Sticker sticker) {
+
+    }
+
+    @Override public void onStickerDragFinished(@NonNull Sticker sticker) {
+
+    }
+
+    @Override public void onStickerZoomFinished(@NonNull Sticker sticker) {
+
+    }
+
+    @Override public void onStickerFlipped(@NonNull Sticker sticker) {
+
+    }
+
+    @Override public void onStickerDoubleTapped(@NonNull Sticker sticker) {
+
+    }
   }
 }
