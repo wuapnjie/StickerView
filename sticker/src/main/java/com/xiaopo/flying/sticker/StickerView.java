@@ -401,6 +401,8 @@ public class StickerView extends FrameLayout {
           if (constrained) {
             constrainSticker(handlingSticker);
           }
+
+          onStickerOperationListener.onStickerDragged(handlingSticker);
         }
         break;
       case ActionMode.ZOOM_WITH_TWO_FINGER:
@@ -851,6 +853,9 @@ public class StickerView extends FrameLayout {
   }
 
   public interface OnStickerOperationListener {
+
+    void onStickerDragged(@NonNull Sticker sticker);
+
     void onStickerAdded(@NonNull Sticker sticker);
 
     void onStickerClicked(@NonNull Sticker sticker);
