@@ -4,11 +4,19 @@ StickerView
 
 A view which can add sticker and zoom,drag,flip,delete it
 
+**I hope you can copy the source code to your project so you can design your own function.**
+
 ## Screenshots
 ![](https://github.com/wuapnjie/StickerView/blob/master/screenshots/screenshot1.png)
 ![](https://github.com/wuapnjie/StickerView/blob/master/screenshots/screenshot2.png)
 
 ## Usage
+
+**Suggestion**
+
+**copy the source code to your project so you can design your own function.**
+
+or
 
 In your **build.gradle**
 
