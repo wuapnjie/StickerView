@@ -342,11 +342,13 @@ public class StickerView extends FrameLayout {
     }
 
     if (handlingSticker != null) {
-      onStickerOperationListener.onStickerTouchedDown(handlingSticker);
       downMatrix.set(handlingSticker.getMatrix());
       if (bringToFrontCurrentSticker) {
         stickers.remove(handlingSticker);
         stickers.add(handlingSticker);
+      }
+      if (onStickerOperationListener != null){
+        onStickerOperationListener.onStickerTouchedDown(handlingSticker);
       }
     }
 
