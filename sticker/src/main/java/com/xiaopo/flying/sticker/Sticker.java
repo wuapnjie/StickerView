@@ -37,6 +37,8 @@ public abstract class Sticker {
   private boolean isFlippedHorizontally;
   private boolean isFlippedVertically;
 
+  public String tag = "";
+
   public boolean isFlippedHorizontally() {
     return isFlippedHorizontally;
   }
