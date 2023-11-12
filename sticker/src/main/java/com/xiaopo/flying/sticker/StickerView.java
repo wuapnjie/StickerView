@@ -347,6 +347,9 @@ public class StickerView extends FrameLayout {
         stickers.remove(handlingSticker);
         stickers.add(handlingSticker);
       }
+      if (onStickerOperationListener != null){
+        onStickerOperationListener.onStickerTouchedDown(handlingSticker);
+      }
     }
 
     if (currentIcon == null && handlingSticker == null) {
@@ -863,6 +866,8 @@ public class StickerView extends FrameLayout {
     void onStickerDeleted(@NonNull Sticker sticker);
 
     void onStickerDragFinished(@NonNull Sticker sticker);
+
+    void onStickerTouchedDown(@NonNull Sticker sticker);
 
     void onStickerZoomFinished(@NonNull Sticker sticker);
 
